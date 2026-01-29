@@ -28,6 +28,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&family=Source+Serif+Pro:wght@400;600;700&display=swap" as="style">
     <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
 
     <!-- Core Stack -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -149,8 +150,10 @@
         .trust-badge:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
         
         /* Accessibility Focus */
-        *:focus { outline: 2px solid #3b82f6; outline-offset: 2px; }
+        *:focus { outline: 3px solid #3b82f6; outline-offset: 3px; }
         .dark *:focus { outline-color: #60a5fa; }
+        button:focus, a:focus, input:focus, select:focus, textarea:focus { outline: 3px solid #3b82f6; outline-offset: 2px; }
+        .dark button:focus, .dark a:focus, .dark input:focus { outline-color: #60a5fa; }
         
         /* Print Optimierung */
         @media print {
@@ -158,22 +161,50 @@
             body { color: black; background: white; }
             .glass-card, .glass-panel { background: white; border: 1px solid #ddd; }
         }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* High contrast mode */
+        @media (prefers-contrast: high) {
+            .glass-card, .glass-panel {
+                border: 2px solid #000;
+            }
+            .dark .glass-card, .dark .glass-panel {
+                border: 2px solid #fff;
+            }
+        }
+
+        /* Performance optimizations */
+        .will-change-transform { will-change: transform; }
+        .content-visibility-auto { content-visibility: auto; }
+        
+        /* Lazy loading fade-in */
+        .lazy-load { opacity: 0; transition: opacity 0.3s ease-in; }
+        .lazy-loaded { opacity: 1; }
     </style>
 </head>
-<body id="top" class="bg-white text-slate-800 font-sans leading-relaxed antialiased relative dark:bg-slate-900 dark:text-slate-200 transition-colors duration-300">
+<body id="top" class="bg-white text-slate-800 font-sans leading-relaxed antialiased relative dark:bg-slate-900 dark:text-slate-200 transition-colors duration-300" aria-label="Hauptinhalt Wasserwissen Institut">
 
     <!-- DARK MODE TOGGLE -->
-    <button id="dark-mode-toggle" class="fixed bottom-6 right-6 z-[1000] w-12 h-12 rounded-full bg-slate-800 text-white shadow-xl flex items-center justify-center hover:bg-slate-900 transition dark:bg-slate-700 dark:hover:bg-slate-600" aria-label="Dark Mode umschalten">
-        <i class="fa-solid fa-moon dark:hidden"></i>
-        <i class="fa-solid fa-sun hidden dark:block"></i>
+    <button id="dark-mode-toggle" class="fixed bottom-6 right-6 z-[1000] w-12 h-12 rounded-full bg-slate-800 text-white shadow-xl flex items-center justify-center hover:bg-slate-900 transition dark:bg-slate-700 dark:hover:bg-slate-600" aria-label="Dark Mode umschalten" aria-live="polite">
+        <i class="fa-solid fa-moon dark:hidden" aria-hidden="true"></i>
+        <i class="fa-solid fa-sun hidden dark:block" aria-hidden="true"></i>
     </button>
 
     <!-- NAVIGATION ERWEITERT -->
-    <nav class="fixed top-0 w-full z-[1100] glass-panel border-b border-slate-200/80 dark:border-slate-800">
+    <nav class="fixed top-0 w-full z-[1100] glass-panel border-b border-slate-200/80 dark:border-slate-800" aria-label="Hauptnavigation">
         <div class="max-w-8xl mx-auto px-4 h-20 flex justify-between items-center">
             <!-- LOGO CLICKABLE -->
-            <a href="#top" class="flex items-center gap-3 hover:opacity-80 transition cursor-pointer" aria-label="Zur Startseite">
-                <div class="w-12 h-12 bg-gradient-to-br from-brand-600 via-sci-500 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20 dark:shadow-blue-900/50">
+            <a href="#top" class="flex items-center gap-3 hover:opacity-80 transition cursor-pointer" aria-label="Zur Startseite Wasserwissen Institut">
+                <div class="w-12 h-12 bg-gradient-to-br from-brand-600 via-sci-500 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20 dark:shadow-blue-900/50" aria-hidden="true">
                     <i class="fa-solid fa-microscope text-xl"></i>
                 </div>
                 <div>
@@ -183,20 +214,20 @@
             </a>
             
             <div class="hidden lg:flex gap-6 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                <a href="#analysetool" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-chart-line text-xs"></i> Analyse</a>
-                <a href="#interaktiv" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-calculator text-xs"></i> Tools & Rechner</a>
-                <a href="#mieterhub" class="hover:text-safe-600 transition text-safe-600 dark:text-safe-400 font-bold flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-safe-50 dark:hover:bg-safe-900/30"><i class="fa-solid fa-house-chimney-user"></i> Mieter</a>
-                <a href="#lexikon" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-book-atlas text-xs"></i> Wiki</a>
-                <a href="#affiliate" class="hover:text-premium-600 dark:hover:text-premium-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/30"><i class="fa-solid fa-crown text-xs"></i> Lösungen</a>
-                <a href="#wissenschaft" class="hover:text-sci-600 dark:hover:text-sci-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-sci-50 dark:hover:bg-sci-900/30"><i class="fa-solid fa-flask text-xs"></i> Forschung</a>
+                <a href="#analysetool" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" aria-label="Zur Wasseranalyse"><i class="fa-solid fa-chart-line text-xs" aria-hidden="true"></i> Analyse</a>
+                <a href="#interaktiv" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" aria-label="Zu den Tools und Rechnern"><i class="fa-solid fa-calculator text-xs" aria-hidden="true"></i> Tools & Rechner</a>
+                <a href="#mieterhub" class="hover:text-safe-600 transition text-safe-600 dark:text-safe-400 font-bold flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-safe-50 dark:hover:bg-safe-900/30" aria-label="Zum Mieterbereich"><i class="fa-solid fa-house-chimney-user" aria-hidden="true"></i> Mieter</a>
+                <a href="#lexikon" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" aria-label="Zum Wasserlexikon"><i class="fa-solid fa-book-atlas text-xs" aria-hidden="true"></i> Wiki</a>
+                <a href="#affiliate" class="hover:text-premium-600 dark:hover:text-premium-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/30" aria-label="Zu den Filterlösungen"><i class="fa-solid fa-crown text-xs" aria-hidden="true"></i> Lösungen</a>
+                <a href="#wissenschaft" class="hover:text-sci-600 dark:hover:text-sci-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-sci-50 dark:hover:bg-sci-900/30" aria-label="Zur Forschung"><i class="fa-solid fa-flask text-xs" aria-hidden="true"></i> Forschung</a>
             </div>
             
             <div class="flex items-center gap-4">
                 <button onclick="scrollToSearch()" class="bg-gradient-to-r from-brand-600 to-sci-500 text-white px-6 py-2.5 rounded-full font-bold text-sm hover:shadow-xl transition-all duration-300 flex items-center gap-2 shadow-md hover:scale-105 active:scale-95" aria-label="PLZ Analyse starten">
-                    <i class="fa-solid fa-magnifying-glass text-xs"></i> PLZ analysieren
+                    <i class="fa-solid fa-magnifying-glass text-xs" aria-hidden="true"></i> PLZ analysieren
                 </button>
-                <button class="lg:hidden p-2 text-slate-700 dark:text-slate-300" onclick="toggleMobileMenu()" aria-label="Mobile Navigation öffnen">
-                    <i class="fa-solid fa-bars text-xl"></i>
+                <button class="lg:hidden p-2 text-slate-700 dark:text-slate-300" onclick="toggleMobileMenu()" aria-label="Mobile Navigation öffnen" aria-expanded="false" aria-controls="mobile-menu">
+                    <i class="fa-solid fa-bars text-xl" aria-hidden="true"></i>
                 </button>
             </div>
         </div>
@@ -204,11 +235,11 @@
         <!-- MOBILE MENU -->
         <div id="mobile-menu" class="hidden lg:hidden absolute top-20 left-0 w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-xl z-[1099]">
             <div class="flex flex-col p-4 space-y-3">
-                <a href="#analysetool" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-chart-line"></i> Analyse</a>
-                <a href="#interaktiv" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-calculator"></i> Tools & Rechner</a>
-                <a href="#mieterhub" class="hover:text-safe-600 transition text-safe-600 dark:text-safe-400 font-bold flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-safe-50 dark:hover:bg-safe-900/30"><i class="fa-solid fa-house-chimney-user"></i> Mieter</a>
-                <a href="#lexikon" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-book-atlas"></i> Wiki</a>
-                <a href="#affiliate" class="hover:text-premium-600 dark:hover:text-premium-400 transition flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/30"><i class="fa-solid fa-crown"></i> Lösungen</a>
+                <a href="#analysetool" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" aria-label="Zur Wasseranalyse"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Analyse</a>
+                <a href="#interaktiv" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" aria-label="Zu den Tools und Rechnern"><i class="fa-solid fa-calculator" aria-hidden="true"></i> Tools & Rechner</a>
+                <a href="#mieterhub" class="hover:text-safe-600 transition text-safe-600 dark:text-safe-400 font-bold flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-safe-50 dark:hover:bg-safe-900/30" aria-label="Zum Mieterbereich"><i class="fa-solid fa-house-chimney-user" aria-hidden="true"></i> Mieter</a>
+                <a href="#lexikon" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" aria-label="Zum Wasserlexikon"><i class="fa-solid fa-book-atlas" aria-hidden="true"></i> Wiki</a>
+                <a href="#affiliate" class="hover:text-premium-600 dark:hover:text-premium-400 transition flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/30" aria-label="Zu den Filterlösungen"><i class="fa-solid fa-crown" aria-hidden="true"></i> Lösungen</a>
             </div>
         </div>
     </nav>
@@ -217,11 +248,11 @@
     <div class="bg-gradient-to-r from-green-50 to-emerald-100 border-y border-emerald-200 dark:from-emerald-900/30 dark:to-emerald-800/30 dark:border-emerald-800 py-3 px-4 mt-20">
         <div class="max-w-8xl mx-auto">
             <div class="flex flex-wrap justify-center gap-4 md:gap-6 text-xs md:text-sm text-slate-700 dark:text-slate-300">
-                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm"><i class="fa-solid fa-scale-balanced text-emerald-600 dark:text-emerald-400"></i><span class="font-semibold">Konformität nach EU-Richtlinie 2020/2184</span></div>
-                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm"><i class="fa-solid fa-flask-vial text-blue-600 dark:text-blue-400"></i><span class="font-semibold">Analytik-Standard DIN 38407-42</span></div>
-                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm"><i class="fa-solid fa-database text-purple-600 dark:text-purple-400"></i><span class="font-semibold">Echtzeit-Abgleich: 14.000+ Messstellen</span></div>
-                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm"><i class="fa-solid fa-user-shield text-slate-700 dark:text-slate-300"></i><span class="font-semibold">Unabhängiges Monitoring seit 2018</span></div>
-                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm"><i class="fa-solid fa-check-double text-green-600 dark:text-green-400"></i><span class="font-semibold">ISO 17025 zertifizierte Laborpartner</span></div>
+                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm" role="status" aria-label="Konformität nach EU-Richtlinie 2020/2184"><i class="fa-solid fa-scale-balanced text-emerald-600 dark:text-emerald-400" aria-hidden="true"></i><span class="font-semibold">Konformität nach EU-Richtlinie 2020/2184</span></div>
+                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm" role="status" aria-label="Analytik-Standard DIN 38407-42"><i class="fa-solid fa-flask-vial text-blue-600 dark:text-blue-400" aria-hidden="true"></i><span class="font-semibold">Analytik-Standard DIN 38407-42</span></div>
+                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm" role="status" aria-label="Echtzeit-Abgleich: 14.000+ Messstellen"><i class="fa-solid fa-database text-purple-600 dark:text-purple-400" aria-hidden="true"></i><span class="font-semibold">Echtzeit-Abgleich: 14.000+ Messstellen</span></div>
+                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm" role="status" aria-label="Unabhängiges Monitoring seit 2018"><i class="fa-solid fa-user-shield text-slate-700 dark:text-slate-300" aria-hidden="true"></i><span class="font-semibold">Unabhängiges Monitoring seit 2018</span></div>
+                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm" role="status" aria-label="ISO 17025 zertifizierte Laborpartner"><i class="fa-solid fa-check-double text-green-600 dark:text-green-400" aria-hidden="true"></i><span class="font-semibold">ISO 17025 zertifizierte Laborpartner</span></div>
             </div>
         </div>
     </div>
@@ -231,10 +262,10 @@
         <div class="absolute inset-0 bg-gradient-to-r from-brand-600/20 via-sci-500/20 to-tox-500/20"></div>
         <div class="max-w-8xl mx-auto px-4 flex flex-col md:flex-row items-center justify-center gap-4 text-center relative z-10">
             <div class="flex items-center gap-2 text-red-400 font-bold uppercase tracking-widest text-xs">
-                <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse" aria-hidden="true"></span>
                 Deadline TrinkwV 2026
             </div>
-            <div class="font-mono font-bold text-xl md:text-2xl tracking-tight" id="compliance-countdown">
+            <div class="font-mono font-bold text-xl md:text-2xl tracking-tight" id="compliance-countdown" aria-live="polite">
                 -- TAGE -- STD -- MIN
             </div>
             <div class="text-xs text-slate-400 max-w-md">
@@ -245,12 +276,12 @@
 
     <!-- 1. HERO SECTION MIT VIEL MEHR CONTENT -->
     <section class="relative gradient-bg overflow-hidden pt-12 pb-16 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-950">
-        <div class="absolute top-1/4 right-1/4 molecule-container-3d hidden lg:block"><div class="molecule-3d" id="hero-molecule-3d"></div></div>
+        <div class="absolute top-1/4 right-1/4 molecule-container-3d hidden lg:block" aria-hidden="true"><div class="molecule-3d" id="hero-molecule-3d"></div></div>
         <div class="max-w-8xl mx-auto px-4 relative z-10 pt-6 pb-20">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <div class="animate-fade-in-up">
                     <div class="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 text-sm font-bold">
-                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse" aria-hidden="true"></span>
                         DIE AUTORITÄT FÜR TRINKWASSERSICHERHEIT
                     </div>
                     <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white mb-6 leading-[1.1] tracking-tight">
@@ -264,7 +295,7 @@
                         <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                             <div class="flex-shrink-0">
                                 <div class="w-12 h-12 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center">
-                                    <i class="fa-solid fa-triangle-exclamation text-brand-600 dark:text-brand-400 text-xl"></i>
+                                    <i class="fa-solid fa-triangle-exclamation text-brand-600 dark:text-brand-400 text-xl" aria-hidden="true"></i>
                                 </div>
                             </div>
                             <div class="flex-grow">
@@ -278,10 +309,10 @@
                     
                     <div class="flex flex-col sm:flex-row gap-4 mb-12">
                         <button onclick="scrollToSearch()" class="bg-gradient-to-r from-brand-600 to-sci-500 hover:from-brand-700 hover:to-sci-600 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 active:scale-95 flex items-center justify-center gap-3" aria-label="Jetzt Risiko prüfen">
-                            <i class="fa-solid fa-magnifying-glass"></i> Jetzt Risiko prüfen
+                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Jetzt Risiko prüfen
                         </button>
-                        <button onclick="document.getElementById('wissenschaft').scrollIntoView({behavior:'smooth'})" class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-3">
-                            <i class="fa-solid fa-book-open"></i> Wissenschaftliche Grundlagen
+                        <button onclick="document.getElementById('wissenschaft').scrollIntoView({behavior:'smooth'})" class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-3" aria-label="Wissenschaftliche Grundlagen anzeigen">
+                            <i class="fa-solid fa-book-open" aria-hidden="true"></i> Wissenschaftliche Grundlagen
                         </button>
                     </div>
                     
@@ -310,13 +341,13 @@
                     <div class="glass-card rounded-3xl p-1 shadow-2xl relative dark:bg-slate-800/90 dark:border-slate-700">
                         <div class="bg-gradient-to-br from-slate-900 to-brand-900 dark:from-slate-950 dark:to-slate-900 rounded-[1.75rem] p-8 text-white relative overflow-hidden">
                             <!-- Background Chart Visual -->
-                            <div class="absolute top-4 right-4 w-32 h-32 opacity-20 pointer-events-none">
+                            <div class="absolute top-4 right-4 w-32 h-32 opacity-20 pointer-events-none" aria-hidden="true">
                                 <canvas id="heroChart"></canvas>
                             </div>
                             
                             <div class="flex items-center gap-2 mb-4">
                                 <div class="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center">
-                                    <i class="fa-solid fa-shield-halved text-brand-300"></i>
+                                    <i class="fa-solid fa-shield-halved text-brand-300" aria-hidden="true"></i>
                                 </div>
                                 <h3 class="text-2xl font-bold">Schnell-Check: Ist Ihr Wasser sicher?</h3>
                             </div>
@@ -328,25 +359,25 @@
                             <!-- Value Props -->
                             <div class="grid grid-cols-2 gap-2 mb-6 text-xs font-medium text-slate-300">
                                 <div class="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5">
-                                    <i class="fa-solid fa-database text-blue-400"></i> UBA & EU Daten
+                                    <i class="fa-solid fa-database text-blue-400" aria-hidden="true"></i> UBA & EU Daten
                                 </div>
                                 <div class="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5">
-                                    <i class="fa-solid fa-bolt text-yellow-400"></i> Sofort-Ergebnis
+                                    <i class="fa-solid fa-bolt text-yellow-400" aria-hidden="true"></i> Sofort-Ergebnis
                                 </div>
                                 <div class="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5">
-                                    <i class="fa-solid fa-user-shield text-green-400"></i> Anonym & Sicher
+                                    <i class="fa-solid fa-user-shield text-green-400" aria-hidden="true"></i> Anonym & Sicher
                                 </div>
                                 <div class="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5">
-                                    <i class="fa-solid fa-file-pdf text-red-400"></i> PDF-Report
+                                    <i class="fa-solid fa-file-pdf text-red-400" aria-hidden="true"></i> PDF-Report
                                 </div>
                             </div>
                             
                             <div class="mb-6">
                                 <div class="relative group">
-                                    <i class="fa-solid fa-map-pin absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-brand-400 transition-colors"></i>
+                                    <i class="fa-solid fa-map-pin absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-brand-400 transition-colors" aria-hidden="true"></i>
                                     <input type="text" id="hero-plz-input" maxlength="5" placeholder="Ihre Postleitzahl" class="w-full pl-12 pr-32 py-4 rounded-xl text-slate-900 dark:text-white dark:bg-slate-800/50 outline-none text-lg font-bold placeholder-slate-400 dark:placeholder-slate-500 focus:ring-4 focus:ring-brand-500/50 transition shadow-lg" aria-label="Postleitzahl eingeben">
                                     <button onclick="runRealAnalysis()" class="absolute right-2 top-2 bottom-2 bg-gradient-to-r from-brand-600 to-sci-500 hover:from-brand-500 hover:to-sci-400 text-white px-6 rounded-lg font-bold text-sm transition-all shadow-md flex items-center gap-2" aria-label="PLZ prüfen">
-                                        Prüfen <i class="fa-solid fa-arrow-right"></i>
+                                        Prüfen <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                                     </button>
                                 </div>
                                 <p class="text-xs text-slate-400 mt-2">Beispiel: 10115 (Berlin-Mitte), 80331 (München), 50667 (Köln)</p>
@@ -355,8 +386,8 @@
                             <div class="text-center border-t border-white/10 pt-4">
                                 <p class="text-[10px] text-slate-500 flex items-center justify-center gap-2">
                                     <span class="relative flex h-2 w-2">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" aria-hidden="true"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500" aria-hidden="true"></span>
                                     </span> 
                                     2.840 Analysen in der letzten Stunde
                                 </p>
@@ -368,15 +399,15 @@
                     <!-- Zusätzliche Trust Elemente -->
                     <div class="mt-6 grid grid-cols-3 gap-3">
                         <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
-                            <i class="fa-solid fa-check text-green-500 mb-1"></i>
+                            <i class="fa-solid fa-check text-green-500 mb-1" aria-hidden="true"></i>
                             <div class="text-xs font-bold text-slate-700 dark:text-slate-300">TÜV geprüft</div>
                         </div>
                         <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
-                            <i class="fa-solid fa-lock text-blue-500 mb-1"></i>
+                            <i class="fa-solid fa-lock text-blue-500 mb-1" aria-hidden="true"></i>
                             <div class="text-xs font-bold text-slate-700 dark:text-slate-300">DSGVO konform</div>
                         </div>
                         <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
-                            <i class="fa-solid fa-heart text-red-500 mb-1"></i>
+                            <i class="fa-solid fa-heart text-red-500 mb-1" aria-hidden="true"></i>
                             <div class="text-xs font-bold text-slate-700 dark:text-slate-300">Made in Germany</div>
                         </div>
                     </div>
@@ -387,11 +418,11 @@
 
     <!-- 2. PFAS RADAR MIT MEHR CONTENT -->
     <section id="radar" class="pt-12 pb-24 bg-slate-50 dark:bg-slate-950 relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 dark:opacity-10 pointer-events-none"></div>
+        <div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 dark:opacity-10 pointer-events-none" aria-hidden="true"></div>
         <div class="max-w-8xl mx-auto px-4 relative z-10">
             <div class="text-center mb-12">
                 <span class="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-gradient-to-r from-sci-600 to-brand-600 text-white text-sm font-bold uppercase tracking-wider mb-6 shadow-lg">
-                    <i class="fa-solid fa-satellite-dish animate-pulse"></i> Live-Monitoring Network
+                    <i class="fa-solid fa-satellite-dish animate-pulse" aria-hidden="true"></i> Live-Monitoring Network
                 </span>
                 <h2 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 max-w-4xl mx-auto">
                     Nationale <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-tox-600">Kontaminations-Karte</span>
@@ -405,34 +436,34 @@
                 <!-- MAP -->
                 <div class="lg:col-span-8">
                     <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 h-[600px] flex flex-col relative group">
-                        <div class="radar-sweep"></div>
-                        <div id="pfas-map" class="flex-grow w-full h-full z-0"></div>
+                        <div class="radar-sweep" aria-hidden="true"></div>
+                        <div id="pfas-map" class="flex-grow w-full h-full z-0" aria-label="Karte der PFAS Belastung in Deutschland" role="application" tabindex="0"></div>
                         <div class="absolute bottom-6 left-6 z-[500] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xl max-w-xs transition-all duration-500 hover:scale-105 cursor-pointer">
                             <div class="flex items-center gap-2 mb-2">
-                                <div class="w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
+                                <div class="w-2 h-2 bg-red-500 rounded-full animate-ping" aria-hidden="true"></div>
                                 <h5 class="font-bold text-slate-900 dark:text-white text-sm">Echtzeit-Alert: Rastatt (Baden-Württemberg)</h5>
                             </div>
                             <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
                                 Erhöhte PFOA-Konzentrationen im Grundwasser entdeckt (42 ng/L). Ursache: Papierschlamm-Austragung in den 1990er Jahren. Betrifft ca. 120.000 Haushalte.
                             </p>
-                            <button onclick="scrollToSearch()" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">
-                                Eigene Region prüfen <i class="fa-solid fa-arrow-right"></i>
+                            <button onclick="scrollToSearch()" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1" aria-label="Eigene Region prüfen">
+                                Eigene Region prüfen <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                             </button>
                         </div>
                         
                         <!-- Map Controls -->
                         <div class="absolute top-6 right-6 z-[500] flex flex-col gap-2">
                             <button onclick="updateMapFilter('pfas')" class="bg-white dark:bg-slate-800 p-2 rounded-lg shadow-md hover:shadow-lg transition" aria-label="PFAS anzeigen">
-                                <i class="fa-solid fa-radiation text-red-500"></i>
+                                <i class="fa-solid fa-radiation text-red-500" aria-hidden="true"></i>
                             </button>
                             <button onclick="updateMapFilter('nitrate')" class="bg-white dark:bg-slate-800 p-2 rounded-lg shadow-md hover:shadow-lg transition" aria-label="Nitrat anzeigen">
-                                <i class="fa-solid fa-flask text-blue-500"></i>
+                                <i class="fa-solid fa-flask text-blue-500" aria-hidden="true"></i>
                             </button>
                             <button onclick="updateMapFilter('arsenic')" class="bg-white dark:bg-slate-800 p-2 rounded-lg shadow-md hover:shadow-lg transition" aria-label="Arsen anzeigen">
-                                <i class="fa-solid fa-skull-crossbones text-purple-500"></i>
+                                <i class="fa-solid fa-skull-crossbones text-purple-500" aria-hidden="true"></i>
                             </button>
                             <button onclick="downloadMapData()" class="bg-white dark:bg-slate-800 p-2 rounded-lg shadow-md hover:shadow-lg transition" aria-label="Daten herunterladen">
-                                <i class="fa-solid fa-download text-slate-500"></i>
+                                <i class="fa-solid fa-download text-slate-500" aria-hidden="true"></i>
                             </button>
                         </div>
                         
@@ -440,15 +471,15 @@
                         <div class="absolute bottom-6 right-6 z-[500] bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg max-w-xs hidden md:block">
                             <h6 class="font-bold text-slate-900 dark:text-white text-xs mb-2">LEGENDE</h6>
                             <div class="flex items-center gap-2 mb-1">
-                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-red-500" aria-hidden="true"></div>
                                 <span class="text-xs text-slate-700 dark:text-slate-300">> 50 ng/L PFAS</span>
                             </div>
                             <div class="flex items-center gap-2 mb-1">
-                                <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-orange-500" aria-hidden="true"></div>
                                 <span class="text-xs text-slate-700 dark:text-slate-300">20-50 ng/L PFAS</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500" aria-hidden="true"></div>
                                 <span class="text-xs text-slate-700 dark:text-slate-300">< 20 ng/L PFAS</span>
                             </div>
                         </div>
@@ -466,9 +497,9 @@
                 <!-- PANELS -->
                 <div class="lg:col-span-4 flex flex-col gap-6">
                     <div class="bg-slate-900 dark:bg-black text-white p-6 rounded-3xl shadow-xl relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-40 h-40 bg-brand-500 rounded-full blur-[80px] opacity-20 pointer-events-none"></div>
+                        <div class="absolute top-0 right-0 w-40 h-40 bg-brand-500 rounded-full blur-[80px] opacity-20 pointer-events-none" aria-hidden="true"></div>
                         <h3 class="font-bold text-lg mb-4 flex items-center gap-2 relative z-10">
-                            <i class="fa-solid fa-tower-broadcast text-brand-400"></i> Gefahren-Level (24h)
+                            <i class="fa-solid fa-tower-broadcast text-brand-400" aria-hidden="true"></i> Gefahren-Level (24h)
                         </h3>
                         <div class="space-y-4 relative z-10">
                             <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
@@ -493,21 +524,21 @@
                     <!-- TICKER -->
                     <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-slate-800 flex-grow flex flex-col relative overflow-hidden">
                         <h4 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center justify-between relative z-10">
-                            <span><i class="fa-solid fa-list-ul text-slate-400 dark:text-slate-500 mr-2"></i> Live-Feed</span>
+                            <span><i class="fa-solid fa-list-ul text-slate-400 dark:text-slate-500 mr-2" aria-hidden="true"></i> Live-Feed</span>
                             <span class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Live
+                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full" aria-hidden="true"></span> Live
                             </span>
                         </h4>
-                        <div class="space-y-3 relative z-10 overflow-y-auto h-64 pr-2 custom-scrollbar" id="live-feed">
+                        <div class="space-y-3 relative z-10 overflow-y-auto h-64 pr-2 custom-scrollbar" id="live-feed" aria-live="polite">
                             <!-- Ticker items werden via JS geladen -->
                         </div>
-                        <div class="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-white dark:from-slate-900 to-transparent z-20 pointer-events-none"></div>
+                        <div class="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-white dark:from-slate-900 to-transparent z-20 pointer-events-none" aria-hidden="true"></div>
                     </div>
                     
                     <!-- Risikobewertung -->
                     <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-slate-800">
                         <h4 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-chart-simple text-brand-500"></i> Risikobewertung
+                            <i class="fa-solid fa-chart-simple text-brand-500" aria-hidden="true"></i> Risikobewertung
                         </h4>
                         <p class="text-slate-600 dark:text-slate-300 text-sm mb-4">
                             Basierend auf den Daten von heute sind folgende Regionen besonders betroffen:
@@ -527,7 +558,7 @@
                 <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-slate-800">
                     <h4 class="font-bold text-slate-900 dark:text-white mb-4 text-xs uppercase tracking-wide text-center">Langzeit-Trend PFAS (DE 2015-2025)</h4>
                     <div class="h-48 mb-4">
-                        <canvas id="trendChart"></canvas>
+                        <canvas id="trendChart" aria-label="Langzeittrend PFAS in Deutschland von 2015 bis 2025" role="img"></canvas>
                     </div>
                     <p class="text-slate-600 dark:text-slate-300 text-xs text-center">
                         Die durchschnittliche PFAS-Belastung ist seit 2015 um 28% gesunken, bleibt aber in Hotspots kritisch.
@@ -536,7 +567,7 @@
                 <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-slate-800">
                     <h4 class="font-bold text-slate-900 dark:text-white mb-4 text-xs uppercase tracking-wide text-center">Haupt-Quellen von PFAS</h4>
                     <div class="h-48 mb-4">
-                        <canvas id="sourceChart"></canvas>
+                        <canvas id="sourceChart" aria-label="Hauptquellen von PFAS in Prozent: Industrie 45%, Flughäfen 25%, Militär 15%, Deponien 10%" role="img"></canvas>
                     </div>
                     <p class="text-slate-600 dark:text-slate-300 text-xs text-center">
                         45% der Belastung stammt aus der Industrie, 25% von Feuerlöschübungsplätzen.
@@ -545,7 +576,7 @@
                 <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-slate-800">
                     <h4 class="font-bold text-slate-900 dark:text-white mb-4 text-xs uppercase tracking-wide text-center">Chemikalien-Mix in belasteten Regionen</h4>
                     <div class="h-48 mb-4 flex justify-center">
-                        <canvas id="chemicalChart"></canvas>
+                        <canvas id="chemicalChart" aria-label="Chemikalienmix in belasteten Regionen: PFOA 35%, PFOS 30%, Andere 35%" role="img"></canvas>
                     </div>
                     <p class="text-slate-600 dark:text-slate-300 text-xs text-center">
                         PFOA und PFOS machen gemeinsam 65% der PFAS-Belastung aus.
@@ -558,7 +589,7 @@
                 <div class="flex flex-col md:flex-row gap-6 items-start">
                     <div class="md:w-1/4">
                         <div class="w-16 h-16 rounded-2xl bg-sci-500 text-white flex items-center justify-center text-2xl mb-4">
-                            <i class="fa-solid fa-microscope"></i>
+                            <i class="fa-solid fa-microscope" aria-hidden="true"></i>
                         </div>
                         <h4 class="font-bold text-slate-900 dark:text-white text-lg">Wissenschaftliche Einordnung</h4>
                     </div>
@@ -594,11 +625,11 @@
 
     <!-- 3. ANALYSE TOOL (DIAGNOSIS) MIT MEHR CONTENT -->
     <section id="analysetool" class="py-24 bg-slate-900 dark:bg-black relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10" style="background-image: url('https://www.transparenttextures.com/patterns/graphy.png');"></div>
+        <div class="absolute inset-0 opacity-10" style="background-image: url('https://www.transparenttextures.com/patterns/graphy.png');" aria-hidden="true"></div>
         <div class="max-w-5xl mx-auto px-4 relative z-10">
             <div class="text-center mb-12">
                 <span class="inline-flex items-center gap-2 py-1 px-3 rounded bg-brand-900/50 border border-brand-500/30 text-brand-300 text-xs font-mono mb-6">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> SYSTEM ONLINE
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse" aria-hidden="true"></span> SYSTEM ONLINE
                 </span>
                 <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Deep-Scan</span> Analyse
@@ -613,12 +644,12 @@
                 <div class="bg-slate-50 dark:bg-slate-800 p-8 border-b border-slate-200 dark:border-slate-700">
                     <div class="flex flex-col md:flex-row gap-4 items-center">
                         <div class="flex-grow w-full relative">
-                            <i class="fa-solid fa-crosshairs absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-500 text-lg"></i>
-                            <input type="text" id="analysis-plz-input" maxlength="5" placeholder="Postleitzahl eingeben (z.B. 10115)" class="w-full pl-14 pr-6 py-5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-800/50 text-slate-900 dark:text-white outline-none text-xl font-bold placeholder-slate-300 dark:placeholder-slate-500 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition shadow-inner font-mono" aria-label="Postleitzahl">
+                            <i class="fa-solid fa-crosshairs absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-500 text-lg" aria-hidden="true"></i>
+                            <input type="text" id="analysis-plz-input" maxlength="5" placeholder="Postleitzahl eingeben (z.B. 10115)" class="w-full pl-14 pr-6 py-5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-800/50 text-slate-900 dark:text-white outline-none text-xl font-bold placeholder-slate-300 dark:placeholder-slate-500 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition shadow-inner font-mono" aria-label="Postleitzahl für Wasseranalyse">
                             <div class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs text-slate-400 dark:text-slate-500 font-medium bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded hidden md:block">DE-DATENSATZ</div>
                         </div>
                         <button onclick="runRealAnalysis()" class="w-full md:w-auto bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-500 hover:to-blue-500 text-white px-10 py-5 rounded-2xl font-black text-lg transition-all duration-300 shadow-xl hover:shadow-brand-500/30 hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3" aria-label="Analyse starten">
-                            <i class="fa-solid fa-radar animate-pulse"></i> SCAN STARTEN
+                            <i class="fa-solid fa-radar animate-pulse" aria-hidden="true"></i> SCAN STARTEN
                         </button>
                     </div>
                     <p class="text-slate-500 dark:text-slate-400 text-xs mt-4 text-center md:text-left">
@@ -628,7 +659,7 @@
                 
                 <!-- Loading -->
                 <div id="analysis-loading" class="hidden p-12 text-center bg-slate-900 dark:bg-black">
-                    <div class="w-24 h-24 border-4 border-slate-700 border-t-brand-500 rounded-full animate-spin mx-auto mb-8"></div>
+                    <div class="w-24 h-24 border-4 border-slate-700 border-t-brand-500 rounded-full animate-spin mx-auto mb-8" aria-hidden="true"></div>
                     <div class="font-mono text-brand-400 text-lg mb-2" id="loading-text">Initialisiere Satelliten-Verbindung...</div>
                     <p class="text-slate-500 text-sm max-w-md mx-auto">
                         Abgleich mit 14.281 Messstellen, historischen Daten seit 2010 und prognostischen Modellen für Ihre Region.
@@ -636,7 +667,7 @@
                 </div>
                 
                 <!-- Results -->
-                <div id="analysis-results" class="hidden bg-slate-50 dark:bg-slate-900">
+                <div id="analysis-results" class="hidden bg-slate-50 dark:bg-slate-900" aria-live="polite">
                     <div class="p-8 border-b border-slate-200 dark:border-slate-800 flex flex-wrap justify-between items-end gap-4 bg-white dark:bg-slate-900">
                         <div>
                             <div class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Analyse-Objekt</div>
@@ -650,7 +681,7 @@
                             <div class="flex items-center gap-2 justify-end">
                                 <div id="risk-score-badge" class="text-white px-4 py-1 rounded-lg font-bold text-sm bg-slate-400">BERECHNE...</div>
                                 <button onclick="downloadAnalysisPDF()" class="text-xs bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition" aria-label="PDF herunterladen">
-                                    <i class="fa-solid fa-download mr-1"></i> PDF
+                                    <i class="fa-solid fa-download mr-1" aria-hidden="true"></i> PDF
                                 </button>
                             </div>
                         </div>
@@ -659,7 +690,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-0">
                         <div class="md:col-span-7 p-8 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                             <h4 class="font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                                <i class="fa-solid fa-flask text-brand-500"></i> Chemische Parameter
+                                <i class="fa-solid fa-flask text-brand-500" aria-hidden="true"></i> Chemische Parameter
                             </h4>
                             
                             <!-- PFAS -->
@@ -670,7 +701,7 @@
                                 </div>
                                 <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-4 mb-2 overflow-hidden border border-slate-200 dark:border-slate-700 relative">
                                     <div class="absolute top-0 bottom-0 w-0.5 bg-slate-400 dark:bg-slate-600 z-10" style="left: 20%;" title="Grenzwert 20 ng/L"></div>
-                                    <div class="bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 h-full rounded-full transition-all duration-1000 ease-out" id="pfas-bar" style="width: 0%"></div>
+                                    <div class="bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 h-full rounded-full transition-all duration-1000 ease-out" id="pfas-bar" style="width: 0%" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
                                 </div>
                                 <div class="flex justify-between text-xs text-slate-500 dark:text-slate-400">
                                     <span>0 ng/L</span>
@@ -710,7 +741,7 @@
                             <!-- Historischer Verlauf -->
                             <div class="bg-slate-50 dark:bg-slate-800/30 p-4 rounded-xl">
                                 <h5 class="font-bold text-slate-900 dark:text-white text-sm mb-2 flex items-center gap-2">
-                                    <i class="fa-solid fa-chart-line"></i> Historischer Verlauf (2015-2025)
+                                    <i class="fa-solid fa-chart-line" aria-hidden="true"></i> Historischer Verlauf (2015-2025)
                                 </h5>
                                 <p class="text-slate-600 dark:text-slate-400 text-xs" id="historical-trend">
                                     Lade historische Daten...
@@ -721,10 +752,10 @@
                         <!-- Experten-Einschätzung -->
                         <div class="md:col-span-5 p-8 bg-slate-50 dark:bg-slate-900/50">
                             <h4 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                <i class="fa-solid fa-robot text-purple-500"></i> KI-Experten-Einschätzung
+                                <i class="fa-solid fa-robot text-purple-500" aria-hidden="true"></i> KI-Experten-Einschätzung
                             </h4>
                             <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6 relative">
-                                <div class="absolute -top-2 -left-2 w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs">
+                                <div class="absolute -top-2 -left-2 w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs" aria-hidden="true">
                                     <i class="fa-solid fa-brain"></i>
                                 </div>
                                 <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed" id="ai-summary">
@@ -735,37 +766,37 @@
                             <!-- Handlungsempfehlungen -->
                             <div id="action-crit" class="hidden space-y-4">
                                 <div class="flex items-center gap-3 p-3 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-300 rounded-xl text-sm font-bold border border-red-200 dark:border-red-800 animate-pulse">
-                                    <i class="fa-solid fa-radiation text-lg"></i>
+                                    <i class="fa-solid fa-radiation text-lg" aria-hidden="true"></i>
                                     <div>HANDLUNGSBEDARF: HOCH</div>
                                 </div>
                                 <div class="space-y-3">
                                     <div class="flex items-start gap-3">
                                         <div class="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                            <i class="fa-solid fa-1 text-red-600 dark:text-red-400 text-xs"></i>
+                                            <i class="fa-solid fa-1 text-red-600 dark:text-red-400 text-xs" aria-hidden="true"></i>
                                         </div>
                                         <p class="text-slate-700 dark:text-slate-300 text-sm">Installieren Sie umgehend ein Umkehrosmose-System (z.B. AquaZero ProMax)</p>
                                     </div>
                                     <div class="flex items-start gap-3">
                                         <div class="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                            <i class="fa-solid fa-2 text-orange-600 dark:text-orange-400 text-xs"></i>
+                                            <i class="fa-solid fa-2 text-orange-600 dark:text-orange-400 text-xs" aria-hidden="true"></i>
                                         </div>
                                         <p class="text-slate-700 dark:text-slate-300 text-sm">Informieren Sie Ihren Vermieter/Wasserversorger über die Werte</p>
                                     </div>
                                     <div class="flex items-start gap-3">
                                         <div class="w-6 h-6 rounded-full bg-yellow-100 dark:bg-yellow-900/50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                            <i class="fa-solid fa-3 text-yellow-600 dark:text-yellow-400 text-xs"></i>
+                                            <i class="fa-solid fa-3 text-yellow-600 dark:text-yellow-400 text-xs" aria-hidden="true"></i>
                                         </div>
                                         <p class="text-slate-700 dark:text-slate-300 text-sm">Konsultieren Sie bei gesundheitlichen Bedenken Ihren Hausarzt</p>
                                     </div>
                                 </div>
-                                <button onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'})" class="w-full py-4 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white rounded-xl font-bold text-sm shadow-lg hover:shadow-red-500/30 transition transform hover:scale-[1.02] active:scale-95">
-                                    <i class="fa-solid fa-shield-halved mr-2"></i> Zum Hochleistungs-Schutz
+                                <button onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'})" class="w-full py-4 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white rounded-xl font-bold text-sm shadow-lg hover:shadow-red-500/30 transition transform hover:scale-[1.02] active:scale-95" aria-label="Zum Hochleistungsschutz">
+                                    <i class="fa-solid fa-shield-halved mr-2" aria-hidden="true"></i> Zum Hochleistungs-Schutz
                                 </button>
                             </div>
                             
                             <div id="action-ok" class="hidden">
                                 <div class="flex items-center gap-3 p-3 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-xl text-sm font-bold border border-green-200 dark:border-green-800">
-                                    <i class="fa-solid fa-check-circle text-lg"></i>
+                                    <i class="fa-solid fa-check-circle text-lg" aria-hidden="true"></i>
                                     <div>Werte im Normbereich</div>
                                 </div>
                                 <p class="text-slate-600 dark:text-slate-400 text-sm mt-3">
@@ -775,7 +806,7 @@
                             
                             <div id="action-warn" class="hidden">
                                 <div class="flex items-center gap-3 p-3 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 rounded-xl text-sm font-bold border border-yellow-200 dark:border-yellow-800">
-                                    <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                                    <i class="fa-solid fa-triangle-exclamation text-lg" aria-hidden="true"></i>
                                     <div>Vorsorge empfohlen</div>
                                 </div>
                                 <p class="text-slate-600 dark:text-slate-400 text-sm mt-3">
@@ -809,7 +840,7 @@
             <!-- Wissenschaftlicher Hintergrund -->
             <div class="mt-12 p-8 bg-white/10 dark:bg-slate-800/30 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-slate-700/50">
                 <h4 class="font-bold text-white text-xl mb-4 flex items-center gap-3">
-                    <i class="fa-solid fa-graduation-cap"></i> Wissenschaftlicher Hintergrund der Analyse
+                    <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Wissenschaftlicher Hintergrund der Analyse
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white/10 dark:bg-slate-800/50 p-5 rounded-2xl">
@@ -857,63 +888,63 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
                 <!-- Filter-Kostenrechner -->
                 <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl transition group relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-100 dark:bg-brand-900/30 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-brand-200 dark:group-hover:bg-brand-800/50 transition"></div>
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-100 dark:bg-brand-900/30 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-brand-200 dark:group-hover:bg-brand-800/50 transition" aria-hidden="true"></div>
                     <div class="relative z-10">
                         <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500 to-blue-600 flex items-center justify-center mb-6 shadow-lg">
-                            <i class="fa-solid fa-calculator text-white text-2xl"></i>
+                            <i class="fa-solid fa-calculator text-white text-2xl" aria-hidden="true"></i>
                         </div>
                         <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Kosten-Nutzen-Rechner</h4>
                         <p class="text-slate-600 dark:text-slate-300 mb-6 text-sm leading-relaxed">
                             Sparen Sie bis zu 800€/Jahr gegenüber Flaschenwasser. Berechnen Sie den ROI Ihres Wasserfilters inklusive Umweltkosten (Plastikmüll, CO2-Fußabdruck).
                         </p>
                         <div class="mb-4 flex gap-2 text-xs font-bold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/30 p-2 rounded-lg">
-                            <i class="fa-solid fa-chart-pie"></i> Inkl. Plastikmüll-Ersparnis & CO2-Bilanz
+                            <i class="fa-solid fa-chart-pie" aria-hidden="true"></i> Inkl. Plastikmüll-Ersparnis & CO2-Bilanz
                         </div>
-                        <button onclick="openCostCalculator()" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold transition flex items-center justify-center gap-2 group/btn">
+                        <button onclick="openCostCalculator()" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold transition flex items-center justify-center gap-2 group/btn" aria-label="Kosten-Nutzen Rechner öffnen">
                             <span>Rechner öffnen</span>
-                            <i class="fa-solid fa-arrow-right group-hover/btn:translate-x-1 transition"></i>
+                            <i class="fa-solid fa-arrow-right group-hover/btn:translate-x-1 transition" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
                 
                 <!-- Wasserkreislauf -->
                 <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl transition group relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-sci-100 dark:bg-sci-900/30 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-sci-200 dark:group-hover:bg-sci-800/50 transition"></div>
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-sci-100 dark:bg-sci-900/30 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-sci-200 dark:group-hover:bg-sci-800/50 transition" aria-hidden="true"></div>
                     <div class="relative z-10">
                         <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-sci-500 to-cyan-500 flex items-center justify-center mb-6 shadow-lg">
-                            <i class="fa-solid fa-droplet text-white text-2xl"></i>
+                            <i class="fa-solid fa-droplet text-white text-2xl" aria-hidden="true"></i>
                         </div>
                         <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Wasserkreislauf-Simulation</h4>
                         <p class="text-slate-600 dark:text-slate-300 mb-6 text-sm leading-relaxed">
                             Interaktive 3D-Simulation: Verfolgen Sie den Weg des Wassers und der PFAS-Kontamination von der Quelle bis zum Wasserhahn.
                         </p>
                         <div class="mb-4 flex gap-2 text-xs font-bold text-sci-600 dark:text-sci-400 bg-sci-50 dark:bg-sci-900/30 p-2 rounded-lg">
-                            <i class="fa-solid fa-eye"></i> 3D-Visualisierung mit Echtzeit-Daten
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i> 3D-Visualisierung mit Echtzeit-Daten
                         </div>
-                        <button onclick="openWaterCycleSim()" class="w-full py-3 rounded-xl bg-sci-600 hover:bg-sci-700 text-white font-bold transition flex items-center justify-center gap-2 group/btn">
+                        <button onclick="openWaterCycleSim()" class="w-full py-3 rounded-xl bg-sci-600 hover:bg-sci-700 text-white font-bold transition flex items-center justify-center gap-2 group/btn" aria-label="Wasserkreislauf Simulation starten">
                             <span>Simulation starten</span>
-                            <i class="fa-solid fa-play group-hover/btn:scale-110 transition"></i>
+                            <i class="fa-solid fa-play group-hover/btn:scale-110 transition" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
                 
                 <!-- Rechtsdokumente -->
                 <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl transition group relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-safe-100 dark:bg-safe-900/30 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-safe-200 dark:group-hover:bg-safe-800/50 transition"></div>
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-safe-100 dark:bg-safe-900/30 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-safe-200 dark:group-hover:bg-safe-800/50 transition" aria-hidden="true"></div>
                     <div class="relative z-10">
                         <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-safe-500 to-emerald-600 flex items-center justify-center mb-6 shadow-lg">
-                            <i class="fa-solid fa-file-contract text-white text-2xl"></i>
+                            <i class="fa-solid fa-file-contract text-white text-2xl" aria-hidden="true"></i>
                         </div>
                         <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Rechts-Generator für Mieter</h4>
                         <p class="text-slate-600 dark:text-slate-300 mb-6 text-sm leading-relaxed">
                             Erstellen Sie in Sekunden rechtssichere Dokumente für Vermieter: Anfragen, Mietminderungen, Filter-Erlaubnis. Einfach Daten eingaben.
                         </p>
                         <div class="mb-4 flex gap-2 text-xs font-bold text-safe-600 dark:text-safe-400 bg-safe-50 dark:bg-safe-900/30 p-2 rounded-lg">
-                            <i class="fa-solid fa-check"></i> Anwaltlich geprüft & aktuell
+                            <i class="fa-solid fa-check" aria-hidden="true"></i> Anwaltlich geprüft & aktuell
                         </div>
-                        <button onclick="openDocumentGenerator()" class="w-full py-3 rounded-xl bg-safe-600 hover:bg-safe-700 text-white font-bold transition flex items-center justify-center gap-2 group/btn">
+                        <button onclick="openDocumentGenerator()" class="w-full py-3 rounded-xl bg-safe-600 hover:bg-safe-700 text-white font-bold transition flex items-center justify-center gap-2 group/btn" aria-label="Rechtsdokumente Generator öffnen">
                             <span>Dokumente erstellen</span>
-                            <i class="fa-solid fa-file-pdf group-hover/btn:scale-110 transition"></i>
+                            <i class="fa-solid fa-file-pdf group-hover/btn:scale-110 transition" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
@@ -923,7 +954,7 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 text-center">
                     <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl mx-auto mb-3">
-                        <i class="fa-solid fa-filter"></i>
+                        <i class="fa-solid fa-filter" aria-hidden="true"></i>
                     </div>
                     <h5 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Filter-Vergleich</h5>
                     <p class="text-slate-600 dark:text-slate-400 text-xs">Vergleichen Sie 45 Filter systeme nach Effizienz</p>
@@ -931,7 +962,7 @@
                 
                 <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 text-center">
                     <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl mx-auto mb-3">
-                        <i class="fa-solid fa-child"></i>
+                        <i class="fa-solid fa-child" aria-hidden="true"></i>
                     </div>
                     <h5 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Kinder-Risiko</h5>
                     <p class="text-slate-600 dark:text-slate-400 text-xs">Berechnen Sie das spezifische Risiko für Kinder</p>
@@ -939,7 +970,7 @@
                 
                 <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 text-center">
                     <div class="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center text-xl mx-auto mb-3">
-                        <i class="fa-solid fa-leaf"></i>
+                        <i class="fa-solid fa-leaf" aria-hidden="true"></i>
                     </div>
                     <h5 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Öko-Bilanz</h5>
                     <p class="text-slate-600 dark:text-slate-400 text-xs">Berechnen Sie Ihre Umwelt-Ersparnis</p>
@@ -947,7 +978,7 @@
                 
                 <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 text-center">
                     <div class="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center text-xl mx-auto mb-3">
-                        <i class="fa-solid fa-prescription-bottle"></i>
+                        <i class="fa-solid fa-prescription-bottle" aria-hidden="true"></i>
                     </div>
                     <h5 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Medikamenten-Check</h5>
                     <p class="text-slate-600 dark:text-slate-400 text-xs">Prüfen Sie Arzneimittelrückstände in Ihrer Region</p>
@@ -959,7 +990,7 @@
                 <div class="flex flex-col md:flex-row gap-8 items-center">
                     <div class="md:w-1/3">
                         <div class="text-6xl text-brand-500 dark:text-brand-400 mb-4">
-                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                            <i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>
                         </div>
                         <h4 class="font-bold text-slate-900 dark:text-white text-xl">Wissenschaftlich fundierte Tools</h4>
                     </div>
@@ -969,15 +1000,15 @@
                         </p>
                         <div class="flex items-center gap-4 text-sm">
                             <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-circle-check text-green-500"></i>
+                                <i class="fa-solid fa-circle-check text-green-500" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300">Peer-reviewed Algorithmen</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-circle-check text-green-500"></i>
+                                <i class="fa-solid fa-circle-check text-green-500" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300">Transparente Quellen</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-circle-check text-green-500"></i>
+                                <i class="fa-solid fa-circle-check text-green-500" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300">Datenschutzkonform</span>
                             </div>
                         </div>
@@ -992,7 +1023,7 @@
         <div class="max-w-8xl mx-auto px-4">
             <div class="text-center mb-16">
                 <span class="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-gradient-to-r from-safe-50 to-green-50 dark:from-safe-900/30 dark:to-green-900/30 text-safe-700 dark:text-safe-400 text-sm font-bold uppercase tracking-wider mb-6 border border-safe-200 dark:border-safe-800 shadow-sm">
-                    <i class="fa-solid fa-house-chimney-user"></i> Strategischer Fokus 2026
+                    <i class="fa-solid fa-house-chimney-user" aria-hidden="true"></i> Strategischer Fokus 2026
                 </span>
                 <h2 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 max-w-4xl mx-auto leading-tight">
                     Der <span class="text-transparent bg-clip-text bg-gradient-to-r from-safe-600 to-emerald-500">Mieter-Hub</span>:<br>Rechtssicherheit für 58% der Deutschen
@@ -1006,19 +1037,19 @@
                 <!-- LEFT -->
                 <div class="lg:col-span-2 space-y-8">
                     <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group">
-                        <div class="absolute top-0 left-0 w-2 h-full bg-safe-500"></div>
+                        <div class="absolute top-0 left-0 w-2 h-full bg-safe-500" aria-hidden="true"></div>
                         <div class="p-8 md:p-10">
                             <div class="flex flex-col md:flex-row gap-6 md:items-center justify-between mb-8">
                                 <div>
                                     <h3 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
                                         <span class="bg-safe-100 dark:bg-safe-900/50 text-safe-600 dark:text-safe-400 w-10 h-10 rounded-lg flex items-center justify-center text-lg">
-                                            <i class="fa-solid fa-scale-balanced"></i>
+                                            <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
                                         </span>
                                         Ihre Rechte nach § 535 BGB & TrinkwV
                                     </h3>
                                 </div>
                                 <div class="bg-slate-50 dark:bg-slate-800 px-4 py-2 rounded-lg border border-slate-100 dark:border-slate-700 text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                                    <i class="fa-solid fa-check-double text-green-500"></i> Anwaltlich geprüft
+                                    <i class="fa-solid fa-check-double text-green-500" aria-hidden="true"></i> Anwaltlich geprüft
                                 </div>
                             </div>
                             
@@ -1056,11 +1087,11 @@
                             <button onclick="toggleFAQ('mieter1')" class="w-full flex items-center justify-between p-5 text-left group" aria-expanded="false" aria-controls="faq-mieter1">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition">
-                                        <i class="fa-solid fa-screwdriver"></i>
+                                        <i class="fa-solid fa-screwdriver" aria-hidden="true"></i>
                                     </div>
                                     <span class="font-bold text-slate-800 dark:text-slate-200">Muss ich für den Filter bohren?</span>
                                 </div>
-                                <i class="fa-solid fa-chevron-down text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400 transition" id="icon-mieter1"></i>
+                                <i class="fa-solid fa-chevron-down text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400 transition" id="icon-mieter1" aria-hidden="true"></i>
                             </button>
                             <div id="faq-mieter1" class="hidden px-5 pb-6 pt-0 ml-14 border-l-2 border-slate-100 dark:border-slate-800">
                                 <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm">
@@ -1078,11 +1109,11 @@
                             <button onclick="toggleFAQ('mieter2')" class="w-full flex items-center justify-between p-5 text-left group" aria-expanded="false" aria-controls="faq-mieter2">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition">
-                                        <i class="fa-solid fa-droplet-slash"></i>
+                                        <i class="fa-solid fa-droplet-slash" aria-hidden="true"></i>
                                     </div>
                                     <span class="font-bold text-slate-800 dark:text-slate-200">Was passiert bei einem Leck?</span>
                                 </div>
-                                <i class="fa-solid fa-chevron-down text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400 transition" id="icon-mieter2"></i>
+                                <i class="fa-solid fa-chevron-down text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400 transition" id="icon-mieter2" aria-hidden="true"></i>
                             </button>
                             <div id="faq-mieter2" class="hidden px-5 pb-6 pt-0 ml-14 border-l-2 border-slate-100 dark:border-slate-800">
                                 <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm">
@@ -1095,18 +1126,18 @@
                             <button onclick="toggleFAQ('mieter3')" class="w-full flex items-center justify-between p-5 text-left group" aria-expanded="false" aria-controls="faq-mieter3">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition">
-                                        <i class="fa-solid fa-user-shield"></i>
+                                        <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
                                     </div>
                                     <span class="font-bold text-slate-800 dark:text-slate-200">Muss ich den Vermieter informieren?</span>
                                 </div>
-                                <i class="fa-solid fa-chevron-down text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400 transition" id="icon-mieter3"></i>
+                                <i class="fa-solid fa-chevron-down text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400 transition" id="icon-mieter3" aria-hidden="true"></i>
                             </button>
                             <div id="faq-mieter3" class="hidden px-5 pb-6 pt-0 ml-14 border-l-2 border-slate-100 dark:border-slate-800">
                                 <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm">
                                     Bei Auftisch-Filtern: Nein, da keine baulichen Veränderungen vorgenommen werden. Bei Untertisch-Systemen: Rechtlich meist nicht zwingend, aber wir empfehlen eine Information aus gutem nachbarschaftlichem Verhältnis. Nutzen Sie unseren Generator für ein freundliches Info-Schreiben.
                                 </p>
-                                <button onclick="openDocumentGenerator()" class="mt-3 text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-lg transition">
-                                    <i class="fa-solid fa-file-lines mr-1"></i> Vorlage erstellen
+                                <button onclick="openDocumentGenerator()" class="mt-3 text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-lg transition" aria-label="Vorlage erstellen">
+                                    <i class="fa-solid fa-file-lines mr-1" aria-hidden="true"></i> Vorlage erstellen
                                 </button>
                             </div>
                         </div>
@@ -1115,11 +1146,11 @@
                             <button onclick="toggleFAQ('mieter4')" class="w-full flex items-center justify-between p-5 text-left group" aria-expanded="false" aria-controls="faq-mieter4">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition">
-                                        <i class="fa-solid fa-euro-sign"></i>
+                                        <i class="fa-solid fa-euro-sign" aria-hidden="true"></i>
                                     </div>
                                     <span class="font-bold text-slate-800 dark:text-slate-200">Kann ich die Kosten absetzen?</span>
                                 </div>
-                                <i class="fa-solid fa-chevron-down text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400 transition" id="icon-mieter4"></i>
+                                <i class="fa-solid fa-chevron-down text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400 transition" id="icon-mieter4" aria-hidden="true"></i>
                             </button>
                             <div id="faq-mieter4" class="hidden px-5 pb-6 pt-0 ml-14 border-l-2 border-slate-100 dark:border-slate-800">
                                 <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm">
@@ -1134,43 +1165,43 @@
                 <div class="lg:col-span-1 space-y-8">
                     <div class="bg-gradient-to-br from-safe-50 to-emerald-50 dark:from-safe-900/30 dark:to-emerald-900/30 rounded-3xl p-8 border border-safe-200 dark:border-safe-800 shadow-lg relative">
                         <div class="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-safe-500 text-white flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-list-check"></i>
+                            <i class="fa-solid fa-list-check" aria-hidden="true"></i>
                         </div>
                         <h3 class="text-xl font-black text-slate-900 dark:text-white mb-6 uppercase tracking-wider text-sm">Mieter-Checkliste in 5 Schritten</h3>
                         <div class="space-y-4">
-                            <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCheck(this)">
+                            <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCheck(this)" role="checkbox" aria-checked="false">
                                 <div class="w-6 h-6 rounded-md bg-white dark:bg-slate-800 border-2 border-safe-300 dark:border-safe-700 flex items-center justify-center">
-                                    <i class="fa-solid fa-check text-safe-600 dark:text-safe-400 text-xs opacity-0"></i>
+                                    <i class="fa-solid fa-check text-safe-600 dark:text-safe-400 text-xs opacity-0" aria-hidden="true"></i>
                                 </div>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Wasserwerte Ihrer PLZ prüfen</span>
                             </div>
-                            <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCheck(this)">
+                            <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCheck(this)" role="checkbox" aria-checked="false">
                                 <div class="w-6 h-6 rounded-md bg-white dark:bg-slate-800 border-2 border-safe-300 dark:border-safe-700 flex items-center justify-center">
-                                    <i class="fa-solid fa-check text-safe-600 dark:text-safe-400 text-xs opacity-0"></i>
+                                    <i class="fa-solid fa-check text-safe-600 dark:text-safe-400 text-xs opacity-0" aria-hidden="true"></i>
                                 </div>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Passendes System wählen (Auf/Unter)</span>
                             </div>
-                            <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCheck(this)">
+                            <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCheck(this)" role="checkbox" aria-checked="false">
                                 <div class="w-6 h-6 rounded-md bg-white dark:bg-slate-800 border-2 border-safe-300 dark:border-safe-700 flex items-center justify-center">
-                                    <i class="fa-solid fa-check text-safe-600 dark:text-safe-400 text-xs opacity-0"></i>
+                                    <i class="fa-solid fa-check text-safe-600 dark:text-safe-400 text-xs opacity-0" aria-hidden="true"></i>
                                 </div>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Bei Bedarf: Vermieter-Info erstellen</span>
                             </div>
-                            <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCheck(this)">
+                            <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCheck(this)" role="checkbox" aria-checked="false">
                                 <div class="w-6 h-6 rounded-md bg-white dark:bg-slate-800 border-2 border-safe-300 dark:border-safe-700 flex items-center justify-center">
-                                    <i class="fa-solid fa-check text-safe-600 dark:text-safe-400 text-xs opacity-0"></i>
+                                    <i class="fa-solid fa-check text-safe-600 dark:text-safe-400 text-xs opacity-0" aria-hidden="true"></i>
                                 </div>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Filter installieren (10-30 Minuten)</span>
                             </div>
-                            <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCheck(this)">
+                            <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCheck(this)" role="checkbox" aria-checked="false">
                                 <div class="w-6 h-6 rounded-md bg-white dark:bg-slate-800 border-2 border-safe-300 dark:border-safe-700 flex items-center justify-center">
-                                    <i class="fa-solid fa-check text-safe-600 dark:text-safe-400 text-xs opacity-0"></i>
+                                    <i class="fa-solid fa-check text-safe-600 dark:text-safe-400 text-xs opacity-0" aria-hidden="true"></i>
                                 </div>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Filterwartung im Kalender eintragen</span>
                             </div>
                         </div>
-                        <button onclick="completeChecklist()" class="w-full mt-8 bg-safe-600 hover:bg-safe-500 text-white py-3 rounded-xl font-bold text-sm shadow-lg transition">
-                            <i class="fa-solid fa-download mr-2"></i> Liste als PDF speichern
+                        <button onclick="completeChecklist()" class="w-full mt-8 bg-safe-600 hover:bg-safe-500 text-white py-3 rounded-xl font-bold text-sm shadow-lg transition" aria-label="Checkliste als PDF speichern">
+                            <i class="fa-solid fa-download mr-2" aria-hidden="true"></i> Liste als PDF speichern
                         </button>
                     </div>
                     
@@ -1200,19 +1231,19 @@
                     <!-- Must-Have für Mieter -->
                     <div class="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-3xl p-6 border border-blue-200 dark:border-blue-800">
                         <h4 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-star text-yellow-500"></i> Must-Have für Mieter
+                            <i class="fa-solid fa-star text-yellow-500" aria-hidden="true"></i> Must-Have für Mieter
                         </h4>
                         <div class="flex items-center gap-3 mb-4">
                             <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center">
-                                <i class="fa-solid fa-plug text-blue-500 text-xl"></i>
+                                <i class="fa-solid fa-plug text-blue-500 text-xl" aria-hidden="true"></i>
                             </div>
                             <div>
                                 <h5 class="font-bold text-slate-900 dark:text-white text-sm">Plug & Play Systeme</h5>
                                 <p class="text-slate-600 dark:text-slate-400 text-xs">Keine Installation, einfach anschließen</p>
                             </div>
                         </div>
-                        <button onclick="showProductDetails('lotus-vita')" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-bold transition">
-                            <i class="fa-solid fa-filter mr-1"></i> Empfohlene Filter ansehen
+                        <button onclick="showProductDetails('lotus-vita')" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-bold transition" aria-label="Empfohlene Filter ansehen">
+                            <i class="fa-solid fa-filter mr-1" aria-hidden="true"></i> Empfohlene Filter ansehen
                         </button>
                     </div>
                 </div>
@@ -1225,7 +1256,7 @@
                     <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl">
                         <div class="flex items-center gap-3 mb-3">
                             <div class="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center">
-                                <i class="fa-solid fa-user"></i>
+                                <i class="fa-solid fa-user" aria-hidden="true"></i>
                             </div>
                             <div>
                                 <h5 class="font-bold text-slate-900 dark:text-white">Michael, 34, Berlin</h5>
@@ -1240,7 +1271,7 @@
                     <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl">
                         <div class="flex items-center gap-3 mb-3">
                             <div class="w-10 h-10 rounded-full bg-safe-100 dark:bg-safe-900/30 text-safe-600 dark:text-safe-400 flex items-center justify-center">
-                                <i class="fa-solid fa-user"></i>
+                                <i class="fa-solid fa-user" aria-hidden="true"></i>
                             </div>
                             <div>
                                 <h5 class="font-bold text-slate-900 dark:text-white">Sarah, 42, Hamburg</h5>
@@ -1255,7 +1286,7 @@
                     <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl">
                         <div class="flex items-center gap-3 mb-3">
                             <div class="w-10 h-10 rounded-full bg-premium-100 dark:bg-premium-900/30 text-premium-600 dark:text-premium-400 flex items-center justify-center">
-                                <i class="fa-solid fa-user"></i>
+                                <i class="fa-solid fa-user" aria-hidden="true"></i>
                             </div>
                             <div>
                                 <h5 class="font-bold text-slate-900 dark:text-white">Thomas, 51, München</h5>
@@ -1288,7 +1319,7 @@
                         <div class="flex items-start gap-4">
                             <div class="flex-shrink-0">
                                 <div class="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center text-lg">
-                                    <i class="fa-solid fa-flask"></i>
+                                    <i class="fa-solid fa-flask" aria-hidden="true"></i>
                                 </div>
                             </div>
                             <div>
@@ -1302,10 +1333,10 @@
                                     <span class="text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-1 rounded">DOI: 10.1021/acs.est.2c09851</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <button onclick="openPublication('herkert')" class="text-brand-600 dark:text-brand-400 font-bold text-sm hover:underline flex items-center gap-1">
-                                        <i class="fa-solid fa-file-pdf"></i> Studie lesen
+                                    <button onclick="openPublication('herkert')" class="text-brand-600 dark:text-brand-400 font-bold text-sm hover:underline flex items-center gap-1" aria-label="Studie lesen">
+                                        <i class="fa-solid fa-file-pdf" aria-hidden="true"></i> Studie lesen
                                     </button>
-                                    <button onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'})" class="text-xs bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg font-bold transition">
+                                    <button onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'})" class="text-xs bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg font-bold transition" aria-label="Zu den Osmose-Systemen">
                                         Zu den Osmose-Systemen &rarr;
                                     </button>
                                 </div>
@@ -1319,7 +1350,7 @@
                         <div class="flex items-start gap-4">
                             <div class="flex-shrink-0">
                                 <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-lg">
-                                    <i class="fa-solid fa-heart-pulse"></i>
+                                    <i class="fa-solid fa-heart-pulse" aria-hidden="true"></i>
                                 </div>
                             </div>
                             <div>
@@ -1333,10 +1364,10 @@
                                     <span class="text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-1 rounded">PMID: 38372730</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <button onclick="openPublication('efsa')" class="text-brand-600 dark:text-brand-400 font-bold text-sm hover:underline flex items-center gap-1">
-                                        <i class="fa-solid fa-file-pdf"></i> Studie lesen
+                                    <button onclick="openPublication('efsa')" class="text-brand-600 dark:text-brand-400 font-bold text-sm hover:underline flex items-center gap-1" aria-label="Studie lesen">
+                                        <i class="fa-solid fa-file-pdf" aria-hidden="true"></i> Studie lesen
                                     </button>
-                                    <button onclick="scrollToSearch()" class="text-xs bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition">
+                                    <button onclick="scrollToSearch()" class="text-xs bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition" aria-label="Eigenes Risiko prüfen">
                                         Eigenes Risiko prüfen &rarr;
                                     </button>
                                 </div>
@@ -1352,7 +1383,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white/70 dark:bg-slate-800/70 p-5 rounded-2xl text-center">
                         <div class="w-20 h-20 rounded-full bg-slate-200 dark:bg-slate-700 mx-auto mb-3 overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Prof. Dr. Schmidt">
+                            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Prof. Dr. Schmidt" loading="lazy">
                         </div>
                         <h4 class="font-bold text-slate-900 dark:text-white">Prof. Dr. Schmidt</h4>
                         <p class="text-slate-600 dark:text-slate-400 text-sm mb-2">Toxicology, University of Heidelberg</p>
@@ -1361,7 +1392,7 @@
                     
                     <div class="bg-white/70 dark:bg-slate-800/70 p-5 rounded-2xl text-center">
                         <div class="w-20 h-20 rounded-full bg-slate-200 dark:bg-slate-700 mx-auto mb-3 overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Dr. Müller">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Dr. Müller" loading="lazy">
                         </div>
                         <h4 class="font-bold text-slate-900 dark:text-white">Dr. Müller</h4>
                         <p class="text-slate-600 dark:text-slate-400 text-sm mb-2">Environmental Chemistry, UFZ Leipzig</p>
@@ -1370,7 +1401,7 @@
                     
                     <div class="bg-white/70 dark:bg-slate-800/70 p-5 rounded-2xl text-center">
                         <div class="w-20 h-20 rounded-full bg-slate-200 dark:bg-slate-700 mx-auto mb-3 overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Prof. Dr. Weber">
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Prof. Dr. Weber" loading="lazy">
                         </div>
                         <h4 class="font-bold text-slate-900 dark:text-white">Prof. Dr. Weber</h4>
                         <p class="text-slate-600 dark:text-slate-400 text-sm mb-2">Public Health, Charité Berlin</p>
@@ -1385,7 +1416,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div class="text-center">
                         <div class="w-16 h-16 rounded-2xl bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center text-2xl mx-auto mb-3">
-                            <i class="fa-solid fa-database"></i>
+                            <i class="fa-solid fa-database" aria-hidden="true"></i>
                         </div>
                         <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Datenquellen</h4>
                         <p class="text-slate-600 dark:text-slate-400 text-xs">14.281 Messstellen, UBA, EU, Landesämter</p>
@@ -1393,7 +1424,7 @@
                     
                     <div class="text-center">
                         <div class="w-16 h-16 rounded-2xl bg-sci-100 dark:bg-sci-900/30 text-sci-600 dark:text-sci-400 flex items-center justify-center text-2xl mx-auto mb-3">
-                            <i class="fa-solid fa-chart-line"></i>
+                            <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
                         </div>
                         <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Analysemethoden</h4>
                         <p class="text-slate-600 dark:text-slate-400 text-xs">LC-MS/MS, Geostatistik, KI-Algorithmen</p>
@@ -1401,7 +1432,7 @@
                     
                     <div class="text-center">
                         <div class="w-16 h-16 rounded-2xl bg-safe-100 dark:bg-safe-900/30 text-safe-600 dark:text-safe-400 flex items-center justify-center text-2xl mx-auto mb-3">
-                            <i class="fa-solid fa-check-double"></i>
+                            <i class="fa-solid fa-check-double" aria-hidden="true"></i>
                         </div>
                         <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Qualitätssicherung</h4>
                         <p class="text-slate-600 dark:text-slate-400 text-xs">ISO 17025, Ringversuche, Peer-Review</p>
@@ -1409,7 +1440,7 @@
                     
                     <div class="text-center">
                         <div class="w-16 h-16 rounded-2xl bg-premium-100 dark:bg-premium-900/30 text-premium-600 dark:text-premium-400 flex items-center justify-center text-2xl mx-auto mb-3">
-                            <i class="fa-solid fa-rotate"></i>
+                            <i class="fa-solid fa-rotate" aria-hidden="true"></i>
                         </div>
                         <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Aktualisierung</h4>
                         <p class="text-slate-600 dark:text-slate-400 text-xs">24-Stunden-Update, wöchentliche Reviews</p>
@@ -1428,11 +1459,11 @@
 
     <!-- 7. HYDRO-WIKI LEXIKON MIT VIEL MEHR CONTENT -->
     <section id="lexikon" class="py-24 bg-slate-900 dark:bg-black relative overflow-hidden">
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/connected.png')] opacity-5"></div>
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/connected.png')] opacity-5" aria-hidden="true"></div>
         <div class="max-w-8xl mx-auto px-4 relative z-10">
             <div class="text-center mb-16">
                 <span class="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-slate-800 border border-slate-700 text-sci-400 text-sm font-bold uppercase tracking-wider mb-6 shadow-lg">
-                    <i class="fa-solid fa-database"></i> Knowledge Base
+                    <i class="fa-solid fa-database" aria-hidden="true"></i> Knowledge Base
                 </span>
                 <h2 class="text-4xl md:text-5xl font-black text-white mb-6">
                     Hydro-Wiki: <span class="text-transparent bg-clip-text bg-gradient-to-r from-sci-400 to-cyan-300">Fachwissen entschlüsselt</span>
@@ -1445,29 +1476,29 @@
             <div class="max-w-4xl mx-auto mb-12">
                 <div class="bg-white dark:bg-slate-900 rounded-2xl p-2 flex shadow-2xl shadow-sci-900/50 transform focus-within:scale-105 transition-transform duration-300">
                     <div class="flex-grow relative">
-                        <i class="fa-solid fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="wiki-search" oninput="filterLexicon()" placeholder="Begriff suchen (z.B. 'PFOA', 'Osmose', 'Kalk', 'Nitrat')..." class="w-full pl-12 pr-4 py-3 rounded-xl outline-none text-slate-900 dark:text-white dark:bg-slate-800 font-bold placeholder-slate-400 dark:placeholder-slate-500">
+                        <i class="fa-solid fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" aria-hidden="true"></i>
+                        <input type="text" id="wiki-search" oninput="filterLexicon()" placeholder="Begriff suchen (z.B. 'PFOA', 'Osmose', 'Kalk', 'Nitrat')..." class="w-full pl-12 pr-4 py-3 rounded-xl outline-none text-slate-900 dark:text-white dark:bg-slate-800 font-bold placeholder-slate-400 dark:placeholder-slate-500" aria-label="Wiki durchsuchen">
                     </div>
-                    <button onclick="filterLexicon()" class="ml-2 px-6 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold transition">
+                    <button onclick="filterLexicon()" class="ml-2 px-6 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold transition" aria-label="Suchen">
                         Suchen
                     </button>
                 </div>
                 
                 <!-- Kategorie-Filter -->
                 <div class="flex flex-wrap justify-center gap-2 mt-6">
-                    <button onclick="filterLexiconByCategory('all')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-bold transition" data-category="all">
+                    <button onclick="filterLexiconByCategory('all')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-bold transition" data-category="all" aria-label="Alle Kategorien anzeigen">
                         Alle
                     </button>
-                    <button onclick="filterLexiconByCategory('schadstoffe')" class="px-4 py-2 bg-red-900/50 hover:bg-red-800/50 text-red-300 rounded-lg text-sm font-bold transition" data-category="schadstoffe">
+                    <button onclick="filterLexiconByCategory('schadstoffe')" class="px-4 py-2 bg-red-900/50 hover:bg-red-800/50 text-red-300 rounded-lg text-sm font-bold transition" data-category="schadstoffe" aria-label="Schadstoffe Kategorie">
                         Schadstoffe
                     </button>
-                    <button onclick="filterLexiconByCategory('technik')" class="px-4 py-2 bg-blue-900/50 hover:bg-blue-800/50 text-blue-300 rounded-lg text-sm font-bold transition" data-category="technik">
+                    <button onclick="filterLexiconByCategory('technik')" class="px-4 py-2 bg-blue-900/50 hover:bg-blue-800/50 text-blue-300 rounded-lg text-sm font-bold transition" data-category="technik" aria-label="Technik Kategorie">
                         Technik
                     </button>
-                    <button onclick="filterLexiconByCategory('gesundheit')" class="px-4 py-2 bg-green-900/50 hover:bg-green-800/50 text-green-300 rounded-lg text-sm font-bold transition" data-category="gesundheit">
+                    <button onclick="filterLexiconByCategory('gesundheit')" class="px-4 py-2 bg-green-900/50 hover:bg-green-800/50 text-green-300 rounded-lg text-sm font-bold transition" data-category="gesundheit" aria-label="Gesundheit Kategorie">
                         Gesundheit
                     </button>
-                    <button onclick="filterLexiconByCategory('recht')" class="px-4 py-2 bg-purple-900/50 hover:bg-purple-800/50 text-purple-300 rounded-lg text-sm font-bold transition" data-category="recht">
+                    <button onclick="filterLexiconByCategory('recht')" class="px-4 py-2 bg-purple-900/50 hover:bg-purple-800/50 text-purple-300 rounded-lg text-sm font-bold transition" data-category="recht" aria-label="Recht Kategorie">
                         Recht
                     </button>
                 </div>
@@ -1539,8 +1570,8 @@
                             </label>
                         </div>
                         
-                        <button onclick="showTasteSolution()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-3">
-                            <i class="fa-solid fa-martini-glass-citrus"></i> Passende Lösung anzeigen
+                        <button onclick="showTasteSolution()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-3" aria-label="Passende Lösung anzeigen">
+                            <i class="fa-solid fa-martini-glass-citrus" aria-hidden="true"></i> Passende Lösung anzeigen
                         </button>
                     </div>
                     
@@ -1558,17 +1589,17 @@
                 </div>
                 
                 <div class="relative hidden lg:block h-full min-h-[600px] rounded-3xl overflow-hidden shadow-2xl group">
-                    <img src="https://www.lotus-vita.de/wp-content/lotusvita-gratuity/banner/Hauptprodukte/300x600_1.jpg" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105" alt="Lotus Vita Wasserfilter - Premium Wasserfilter mit Pi-Technologie">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                    <img src="https://www.lotus-vita.de/wp-content/lotusvita-gratuity/banner/Hauptprodukte/300x600_1.jpg" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105" alt="Lotus Vita Wasserfilter - Premium Wasserfilter mit Pi-Technologie" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" aria-hidden="true"></div>
                     <div class="absolute bottom-0 left-0 p-8 text-white z-10">
                         <div class="mb-4">
                             <span class="inline-block bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-bold mb-2">GESCHMACKSSIEGER 2024</span>
                             <h3 class="text-3xl font-black mb-2">LOTUS VITA Premium</h3>
                             <p class="text-slate-300 mb-4">Der einzige Filter, der PFAS entfernt UND das Wasser mit Mineralien anreichert. Japanische Pi-Technologie für weichen Geschmack.</p>
                         </div>
-                        <a href="https://www.lotus-vita.de/?ref=74674" target="_blank" onclick="trackAffiliateClick('lotus_vita_banner')" class="inline-flex items-center justify-center w-full py-4 bg-white text-slate-900 font-bold rounded-xl hover:bg-emerald-50 transition shadow-lg group/link">
+                        <a href="https://www.lotus-vita.de/?ref=74674" target="_blank" onclick="trackAffiliateClick('lotus_vita_banner')" class="inline-flex items-center justify-center w-full py-4 bg-white text-slate-900 font-bold rounded-xl hover:bg-emerald-50 transition shadow-lg group/link" aria-label="Lotus Vita Filter jetzt testen (30 Tage Geld-zurück)">
                             <span>Jetzt Geschmack testen (30 Tage Geld-zurück)</span>
-                            <i class="fa-solid fa-arrow-right ml-2 group-hover/link:translate-x-1 transition"></i>
+                            <i class="fa-solid fa-arrow-right ml-2 group-hover/link:translate-x-1 transition" aria-hidden="true"></i>
                         </a>
                         <p class="text-xs text-slate-400 mt-3">Provision: 12% bei Kauf | Durchschnittlicher Bestellwert: 479€</p>
                     </div>
@@ -1593,7 +1624,7 @@
             <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-2xl p-6 mb-12">
                 <div class="flex items-start gap-4">
                     <div class="flex-shrink-0">
-                        <i class="fa-solid fa-circle-info text-yellow-600 dark:text-yellow-400 text-2xl"></i>
+                        <i class="fa-solid fa-circle-info text-yellow-600 dark:text-yellow-400 text-2xl" aria-hidden="true"></i>
                     </div>
                     <div>
                         <h4 class="font-bold text-slate-900 dark:text-white mb-2">Transparenzhinweis</h4>
@@ -1609,11 +1640,11 @@
                 <!-- AquaZero ProMax -->
                 <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 transform hover:-translate-y-2 transition-all duration-300 flex flex-col group relative">
                     <div class="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10">TESTSIEGER PFAS</div>
-                    <div class="p-1 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500"></div>
+                    <div class="p-1 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500" aria-hidden="true"></div>
                     <div class="p-8 flex-grow flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-shield-halved"></i>
+                                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
                             </div>
                             <div>
                                 <h3 class="text-xl font-bold text-slate-900 dark:text-white">AquaZero ProMax</h3>
@@ -1623,19 +1654,19 @@
                         
                         <ul class="space-y-2 mb-6 flex-grow">
                             <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm">Entfernt >99% PFAS, Nitrat, Blei</span>
                             </li>
                             <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm">Wiedervermineralisierung</span>
                             </li>
                             <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm">Smart-Monitoring per App</span>
                             </li>
                             <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm">Für Mieter & Eigentümer</span>
                             </li>
                         </ul>
@@ -1646,9 +1677,9 @@
                         </div>
                         
                         <div class="space-y-3">
-                            <a href="https://www.aquasana.com/ref/wasserwissen2026" target="_blank" onclick="trackAffiliateClick('aquazero_promax')" class="block w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-center py-4 rounded-xl font-bold hover:shadow-xl transition-all duration-300 shadow-lg group/btn">
+                            <a href="https://www.aquasana.com/ref/wasserwissen2026" target="_blank" onclick="trackAffiliateClick('aquazero_promax')" class="block w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-center py-4 rounded-xl font-bold hover:shadow-xl transition-all duration-300 shadow-lg group/btn" aria-label="AquaZero ProMax mit 15% Rabatt sichern">
                                 <span>Jetzt 15% Rabatt sichern</span>
-                                <i class="fa-solid fa-arrow-right ml-2 group-hover/btn:translate-x-1 transition"></i>
+                                <i class="fa-solid fa-arrow-right ml-2 group-hover/btn:translate-x-1 transition" aria-hidden="true"></i>
                             </a>
                             <p class="text-xs text-center text-slate-500 dark:text-slate-400">
                                 Provision: 14% | Durchschnittl. Bestellwert: 512€
@@ -1660,11 +1691,11 @@
                 <!-- Lotus Vita Fontana -->
                 <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border-2 border-emerald-400 dark:border-emerald-600 transform hover:-translate-y-2 transition-all duration-300 flex flex-col group relative">
                     <div class="absolute top-4 left-4 bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-bold z-10">GESCHMACKSSIEGER</div>
-                    <div class="p-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+                    <div class="p-1 bg-gradient-to-r from-emerald-500 to-teal-500" aria-hidden="true"></div>
                     <div class="p-8 flex-grow flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-martini-glass-citrus"></i>
+                                <i class="fa-solid fa-martini-glass-citrus" aria-hidden="true"></i>
                             </div>
                             <div>
                                 <h3 class="text-xl font-bold text-slate-900 dark:text-white">Lotus Vita Fontana</h3>
@@ -1674,19 +1705,19 @@
                         
                         <ul class="space-y-2 mb-6 flex-grow">
                             <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm">Entfernt 95% PFAS, 99% Kalk</span>
                             </li>
                             <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm">Japanische Pi-Technologie</span>
                             </li>
                             <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm">Verbessert Geschmack deutlich</span>
                             </li>
                             <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm">Perfekt für Mieter (Plug & Play)</span>
                             </li>
                         </ul>
@@ -1697,9 +1728,9 @@
                         </div>
                         
                         <div class="space-y-3">
-                            <a href="https://www.lotus-vita.de/?ref=74674" target="_blank" onclick="trackAffiliateClick('lotus_vita_fontana')" class="block w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-center py-4 rounded-xl font-bold hover:shadow-xl transition-all duration-300 shadow-lg group/btn">
+                            <a href="https://www.lotus-vita.de/?ref=74674" target="_blank" onclick="trackAffiliateClick('lotus_vita_fontana')" class="block w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-center py-4 rounded-xl font-bold hover:shadow-xl transition-all duration-300 shadow-lg group/btn" aria-label="Lotus Vita Fontana 30 Tage kostenlos testen">
                                 <span>30 Tage kostenlos testen</span>
-                                <i class="fa-solid fa-arrow-right ml-2 group-hover/btn:translate-x-1 transition"></i>
+                                <i class="fa-solid fa-arrow-right ml-2 group-hover/btn:translate-x-1 transition" aria-hidden="true"></i>
                             </a>
                             <p class="text-xs text-center text-slate-500 dark:text-slate-400">
                                 Provision: 12% | Durchschnittl. Bestellwert: 479€
@@ -1711,11 +1742,11 @@
                 <!-- HydroGenius AI -->
                 <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 transform hover:-translate-y-2 transition-all duration-300 flex flex-col group relative">
                     <div class="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10">SMART HOME</div>
-                    <div class="p-1 bg-gradient-to-r from-cyan-500 to-blue-500"></div>
+                    <div class="p-1 bg-gradient-to-r from-cyan-500 to-blue-500" aria-hidden="true"></div>
                     <div class="p-8 flex-grow flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="w-12 h-12 rounded-xl bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-robot"></i>
+                                <i class="fa-solid fa-robot" aria-hidden="true"></i>
                             </div>
                             <div>
                                 <h3 class="text-xl font-bold text-slate-900 dark:text-white">HydroGenius AI</h3>
@@ -1725,19 +1756,19 @@
                         
                         <ul class="space-y-2 mb-6 flex-grow">
                             <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm">Überwacht 12 Parameter in Echtzeit</span>
                             </li>
                             <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm">KI warnt vor Belastungen</span>
                             </li>
                             <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm">Kompatibel mit allen Filtersystemen</span>
                             </li>
                             <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs" aria-hidden="true"></i>
                                 <span class="text-slate-700 dark:text-slate-300 text-sm">App mit Gesundheits-Tipps</span>
                             </li>
                         </ul>
@@ -1748,9 +1779,9 @@
                         </div>
                         
                         <div class="space-y-3">
-                            <a href="https://www.hydrogenius.com/ref/wasserwissen2026" target="_blank" onclick="trackAffiliateClick('hydrogenius_ai')" class="block w-full bg-gradient-to-r from-cyan-600 to-blue-500 hover:from-cyan-500 hover:to-blue-400 text-white text-center py-4 rounded-xl font-bold hover:shadow-xl transition-all duration-300 shadow-lg group/btn">
+                            <a href="https://www.hydrogenius.com/ref/wasserwissen2026" target="_blank" onclick="trackAffiliateClick('hydrogenius_ai')" class="block w-full bg-gradient-to-r from-cyan-600 to-blue-500 hover:from-cyan-500 hover:to-blue-400 text-white text-center py-4 rounded-xl font-bold hover:shadow-xl transition-all duration-300 shadow-lg group/btn" aria-label="HydroGenius AI Konfigurator starten">
                                 <span>Konfigurator starten</span>
-                                <i class="fa-solid fa-arrow-right ml-2 group-hover/btn:translate-x-1 transition"></i>
+                                <i class="fa-solid fa-arrow-right ml-2 group-hover/btn:translate-x-1 transition" aria-hidden="true"></i>
                             </a>
                             <p class="text-xs text-center text-slate-500 dark:text-slate-400">
                                 Provision: 8% | Durchschnittl. Bestellwert: 224€
@@ -1766,7 +1797,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-center">
                         <div class="text-slate-400 dark:text-slate-500 text-2xl mb-2">
-                            <i class="fa-solid fa-filter"></i>
+                            <i class="fa-solid fa-filter" aria-hidden="true"></i>
                         </div>
                         <div class="font-bold text-slate-900 dark:text-white text-sm">Brita</div>
                         <div class="text-slate-500 dark:text-slate-400 text-xs">Aktivkohlefilter</div>
@@ -1775,7 +1806,7 @@
                     
                     <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-center">
                         <div class="text-slate-400 dark:text-slate-500 text-2xl mb-2">
-                            <i class="fa-solid fa-droplet"></i>
+                            <i class="fa-solid fa-droplet" aria-hidden="true"></i>
                         </div>
                         <div class="font-bold text-slate-900 dark:text-white text-sm">Berkey</div>
                         <div class="text-slate-500 dark:text-slate-400 text-xs">Gravitationsfilter</div>
@@ -1784,7 +1815,7 @@
                     
                     <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-center">
                         <div class="text-slate-400 dark:text-slate-500 text-2xl mb-2">
-                            <i class="fa-solid fa-flask"></i>
+                            <i class="fa-solid fa-flask" aria-hidden="true"></i>
                         </div>
                         <div class="font-bold text-slate-900 dark:text-white text-sm">IVARIO</div>
                         <div class="text-slate-500 dark:text-slate-400 text-xs">Laboranalysen</div>
@@ -1793,7 +1824,7 @@
                     
                     <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-center">
                         <div class="text-slate-400 dark:text-slate-500 text-2xl mb-2">
-                            <i class="fa-solid fa-shield-halved"></i>
+                            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
                         </div>
                         <div class="font-bold text-slate-900 dark:text-white text-sm">Waterdrop</div>
                         <div class="text-slate-500 dark:text-slate-400 text-xs">Untertisch-Systeme</div>
@@ -1818,8 +1849,8 @@
                     </div>
                     
                     <div>
-                        <button onclick="openCostCalculator()" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold transition">
-                            <i class="fa-solid fa-calculator mr-2"></i> Persönliche Ersparnis berechnen
+                        <button onclick="openCostCalculator()" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold transition" aria-label="Persönliche Ersparnis berechnen">
+                            <i class="fa-solid fa-calculator mr-2" aria-hidden="true"></i> Persönliche Ersparnis berechnen
                         </button>
                     </div>
                 </div>
@@ -1834,7 +1865,7 @@
                 <div>
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-12 h-12 bg-gradient-to-br from-brand-600 via-sci-500 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold">
-                            <i class="fa-solid fa-microscope text-xl"></i>
+                            <i class="fa-solid fa-microscope text-xl" aria-hidden="true"></i>
                         </div>
                         <div>
                             <span class="font-black text-xl tracking-tight block leading-none">WASSERWISSEN</span>
@@ -1872,28 +1903,28 @@
                     <h5 class="font-bold text-white mb-4">Kontakt</h5>
                     <ul class="space-y-2 text-slate-400 text-sm">
                         <li class="flex items-center gap-2">
-                            <i class="fa-solid fa-envelope text-brand-400"></i>
+                            <i class="fa-solid fa-envelope text-brand-400" aria-hidden="true"></i>
                             <span>rps-vertrieb@t-online.de</span>
                         </li>
                         <li class="flex items-center gap-2">
-                            <i class="fa-solid fa-location-dot text-brand-400"></i>
+                            <i class="fa-solid fa-location-dot text-brand-400" aria-hidden="true"></i>
                             <span>Karklandsweg 1, 26553 Dornum</span>
                         </li>
                         <li class="flex items-center gap-2">
-                            <i class="fa-solid fa-phone text-brand-400"></i>
+                            <i class="fa-solid fa-phone text-brand-400" aria-hidden="true"></i>
                             <span>+49 (0) 180 5 123456</span>
                         </li>
                     </ul>
                     
                     <div class="mt-6 flex gap-3">
-                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white transition">
-                            <i class="fa-brands fa-x-twitter"></i>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white transition" aria-label="Twitter">
+                            <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white transition">
-                            <i class="fa-brands fa-linkedin"></i>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white transition" aria-label="LinkedIn">
+                            <i class="fa-brands fa-linkedin" aria-hidden="true"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white transition">
-                            <i class="fa-brands fa-instagram"></i>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white transition" aria-label="Instagram">
+                            <i class="fa-brands fa-instagram" aria-hidden="true"></i>
                         </a>
                     </div>
                 </div>
@@ -1913,12 +1944,12 @@
     </footer>
 
     <!-- MODALS & JS -->
-    <div id="legal-modal" class="analysis-modal hidden">
+    <div id="legal-modal" class="analysis-modal hidden" role="dialog" aria-modal="true" aria-labelledby="legal-title">
         <div class="analysis-content" style="max-width: 800px; max-height: 80vh;">
             <div class="bg-slate-900 dark:bg-black p-6 rounded-t-2xl text-white flex justify-between items-center">
                 <h3 class="font-bold text-xl" id="legal-title">Info</h3>
-                <button onclick="closeLegalModal()" class="text-white hover:text-slate-300">
-                    <i class="fa-solid fa-times text-xl"></i>
+                <button onclick="closeLegalModal()" class="text-white hover:text-slate-300" aria-label="Modal schließen">
+                    <i class="fa-solid fa-times text-xl" aria-hidden="true"></i>
                 </button>
             </div>
             <div class="p-6 overflow-y-auto" id="legal-content"></div>
@@ -1931,14 +1962,14 @@
 
     <!-- Chatbot -->
     <div id="chatbot" class="fixed bottom-6 left-6 z-[1000]">
-        <div id="chatbot-window" class="hidden w-80 md:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 mb-4 overflow-hidden">
+        <div id="chatbot-window" class="hidden w-80 md:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 mb-4 overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="chatbot-title">
             <div class="bg-gradient-to-r from-brand-600 to-sci-500 p-4 text-white flex justify-between items-center">
                 <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-robot"></i>
-                    <span class="font-bold">HydroBot - Wasser-Experte</span>
+                    <i class="fa-solid fa-robot" aria-hidden="true"></i>
+                    <span class="font-bold" id="chatbot-title">HydroBot - Wasser-Experte</span>
                 </div>
-                <button onclick="toggleChat()" class="text-white hover:text-slate-200">
-                    <i class="fa-solid fa-times"></i>
+                <button onclick="toggleChat()" class="text-white hover:text-slate-200" aria-label="Chat schließen">
+                    <i class="fa-solid fa-times" aria-hidden="true"></i>
                 </button>
             </div>
             <div class="h-96 overflow-y-auto p-4" id="chat-messages">
@@ -1950,15 +1981,15 @@
             </div>
             <div class="p-4 border-t border-slate-200 dark:border-slate-700">
                 <div class="flex gap-2">
-                    <input type="text" id="chat-input" placeholder="Ihre Frage..." class="flex-grow p-3 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none" onkeypress="handleChatEnter(event)">
-                    <button onclick="sendMessage()" class="bg-brand-600 hover:bg-brand-700 text-white p-3 rounded-xl">
-                        <i class="fa-solid fa-paper-plane"></i>
+                    <input type="text" id="chat-input" placeholder="Ihre Frage..." class="flex-grow p-3 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none" onkeypress="handleChatEnter(event)" aria-label="Ihre Frage an HydroBot">
+                    <button onclick="sendMessage()" class="bg-brand-600 hover:bg-brand-700 text-white p-3 rounded-xl" aria-label="Nachricht senden">
+                        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
         </div>
-        <button onclick="toggleChat()" class="w-14 h-14 rounded-full bg-gradient-to-r from-brand-600 to-sci-500 text-white shadow-2xl flex items-center justify-center hover:scale-105 transition">
-            <i class="fa-solid fa-robot text-xl"></i>
+        <button onclick="toggleChat()" class="w-14 h-14 rounded-full bg-gradient-to-r from-brand-600 to-sci-500 text-white shadow-2xl flex items-center justify-center hover:scale-105 transition" aria-label="Chat öffnen" aria-expanded="false" aria-controls="chatbot-window">
+            <i class="fa-solid fa-robot text-xl" aria-hidden="true"></i>
         </button>
     </div>
 
@@ -2125,6 +2156,123 @@
             {term: "Wasserversorger-Haftung", cat: "recht", short: "Haftung für Trinkwasserqualität.", full: "Wasserversorger haften für die Qualität bis zum Hausanschluss. Ab dort ist der Hauseigentümer verantwortlich. Bei Grenzwertüberschreitungen müssen Versorger Maßnahmen ergreifen und Verbraucher informieren. Für Altlasten (z.B. PFAS) gibt es Übergangsfristen bis 2030.", product: "", productText: ""}
         ];
 
+        // PERFORMANCE & ACCESSIBILITY IMPROVEMENTS
+        // Intersection Observer for lazy loading
+        const lazyLoadElements = [];
+
+        function initLazyLoading() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const element = entry.target;
+                        if (element.classList.contains('lazy-load')) {
+                            element.classList.add('lazy-loaded');
+                        }
+                        // Load charts when visible
+                        if (element.id === 'trendChart' && typeof Chart !== 'undefined') {
+                            initTrendChart();
+                            observer.unobserve(element);
+                        }
+                        if (element.id === 'sourceChart' && typeof Chart !== 'undefined') {
+                            initSourceChart();
+                            observer.unobserve(element);
+                        }
+                        if (element.id === 'chemicalChart' && typeof Chart !== 'undefined') {
+                            initChemicalChart();
+                            observer.unobserve(element);
+                        }
+                        if (element.id === 'heroChart' && typeof Chart !== 'undefined') {
+                            initHeroChart();
+                            observer.unobserve(element);
+                        }
+                        // Load map when visible
+                        if (element.id === 'pfas-map' && typeof L !== 'undefined') {
+                            initPFASMap();
+                            observer.unobserve(element);
+                        }
+                    }
+                });
+            }, {
+                rootMargin: '100px',
+                threshold: 0.1
+            });
+
+            // Observe all lazy load elements
+            document.querySelectorAll('.lazy-load, #trendChart, #sourceChart, #chemicalChart, #heroChart, #pfas-map').forEach(el => {
+                if (el) observer.observe(el);
+            });
+        }
+
+        // Reduced motion support
+        function handleReducedMotion() {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.documentElement.style.setProperty('--animation-duration', '0.01ms');
+                document.documentElement.style.setProperty('--animation-iteration-count', '1');
+            }
+        }
+
+        // Keyboard navigation improvements
+        function enhanceKeyboardNavigation() {
+            // Add keyboard event listeners for custom components
+            document.addEventListener('keydown', (e) => {
+                // Close modals on Escape
+                if (e.key === 'Escape') {
+                    const modals = document.querySelectorAll('.analysis-modal:not(.hidden)');
+                    if (modals.length > 0) {
+                        closeLegalModal();
+                        modals.forEach(modal => {
+                            if (modal.id !== 'legal-modal') {
+                                modal.remove();
+                            }
+                        });
+                    }
+                    // Close mobile menu
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                        toggleMobileMenu();
+                    }
+                    // Close chatbot
+                    const chatbot = document.getElementById('chatbot-window');
+                    if (chatbot && !chatbot.classList.contains('hidden')) {
+                        toggleChat();
+                    }
+                }
+
+                // Tab trapping for modals
+                if (document.querySelector('.analysis-modal:not(.hidden)')) {
+                    const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+                    const modal = document.querySelector('.analysis-modal:not(.hidden)');
+                    const focusableContent = modal.querySelectorAll(focusableElements);
+                    
+                    if (focusableContent.length > 0) {
+                        const firstFocusableElement = focusableContent[0];
+                        const lastFocusableElement = focusableContent[focusableContent.length - 1];
+
+                        if (e.key === 'Tab') {
+                            if (e.shiftKey) {
+                                if (document.activeElement === firstFocusableElement) {
+                                    lastFocusableElement.focus();
+                                    e.preventDefault();
+                                }
+                            } else {
+                                if (document.activeElement === lastFocusableElement) {
+                                    firstFocusableElement.focus();
+                                    e.preventDefault();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Improve focus visibility for all interactive elements
+            document.querySelectorAll('button, a, input, [tabindex]').forEach(el => {
+                if (!el.hasAttribute('tabindex') && el.getAttribute('tabindex') !== '-1') {
+                    el.setAttribute('tabindex', '0');
+                }
+            });
+        }
+
         // INIT
         document.addEventListener('DOMContentLoaded', () => {
             // Dark Mode aus Local Storage
@@ -2137,13 +2285,18 @@
             document.getElementById('dark-mode-toggle').addEventListener('click', () => {
                 document.documentElement.classList.toggle('dark');
                 localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+                // Announce dark mode change for screen readers
+                const announcement = document.documentElement.classList.contains('dark') 
+                    ? 'Dark Mode aktiviert' 
+                    : 'Light Mode aktiviert';
+                showNotification(announcement, 'success');
             });
             
             // Initialisierungen
-            initHeroChart(); 
-            initPFASMap(); 
-            initMolecule3DVisualization(); 
-            initRadarCharts(); 
+            initLazyLoading();
+            handleReducedMotion();
+            enhanceKeyboardNavigation();
+            initMolecule3DVisualization();
             renderWiki();
             initLiveFeed();
             
@@ -2177,17 +2330,40 @@
             // Mobile Menu
             window.toggleMobileMenu = function() {
                 const menu = document.getElementById('mobile-menu');
-                menu.classList.toggle('hidden');
+                const toggle = document.querySelector('button[onclick="toggleMobileMenu()"]');
+                const isHidden = menu.classList.toggle('hidden');
+                
+                if (toggle) {
+                    toggle.setAttribute('aria-expanded', !isHidden);
+                    toggle.setAttribute('aria-label', isHidden ? 'Mobile Navigation öffnen' : 'Mobile Navigation schließen');
+                }
+                
+                // Trap focus in mobile menu when open
+                if (!isHidden) {
+                    const firstFocusable = menu.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                    if (firstFocusable) firstFocusable.focus();
+                }
             }
             
             // Close mobile menu when clicking outside
             document.addEventListener('click', (e) => {
                 const menu = document.getElementById('mobile-menu');
                 const toggle = document.querySelector('button[onclick="toggleMobileMenu()"]');
-                if (menu && !menu.contains(e.target) && toggle && !toggle.contains(e.target)) {
+                if (menu && !menu.contains(e.target) && toggle && !toggle.contains(e.target) && !menu.classList.contains('hidden')) {
                     menu.classList.add('hidden');
+                    if (toggle) {
+                        toggle.setAttribute('aria-expanded', 'false');
+                        toggle.setAttribute('aria-label', 'Mobile Navigation öffnen');
+                    }
                 }
             });
+
+            // Initialize charts with lazy loading
+            setTimeout(() => {
+                if (typeof Chart !== 'undefined') {
+                    // These will be initialized by IntersectionObserver when visible
+                }
+            }, 100);
         });
 
         // FUNCTIONS
@@ -2196,17 +2372,26 @@
             const m = document.createElement('div'); 
             m.id = id; 
             m.className = 'analysis-modal';
+            m.setAttribute('role', 'dialog');
+            m.setAttribute('aria-modal', 'true');
+            m.setAttribute('aria-labelledby', `${id}-title`);
             m.innerHTML = `
                 <div class="analysis-content" style="max-width: 800px;">
                     <div class="${headerColor} p-6 rounded-t-2xl text-white flex justify-between items-center">
-                        <h3 class="font-bold text-xl">${title}</h3>
-                        <button onclick="document.getElementById('${id}').remove()" class="text-white hover:opacity-80">
-                            <i class="fa-solid fa-times text-xl"></i>
+                        <h3 class="font-bold text-xl" id="${id}-title">${title}</h3>
+                        <button onclick="document.getElementById('${id}').remove()" class="text-white hover:opacity-80" aria-label="Modal schließen">
+                            <i class="fa-solid fa-times text-xl" aria-hidden="true"></i>
                         </button>
                     </div>
                     <div class="p-6">${contentHTML}</div>
                 </div>`;
             c.appendChild(m);
+            
+            // Focus first focusable element in modal
+            setTimeout(() => {
+                const firstFocusable = m.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                if (firstFocusable) firstFocusable.focus();
+            }, 10);
         }
         
         function openCostCalculator() {
@@ -2217,15 +2402,15 @@
                             <h4 class="font-bold text-blue-900 dark:text-blue-300 mb-4">Ihr Konsum</h4>
                             <div class="mb-4">
                                 <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Personen: <span id="val-persons">2</span></label>
-                                <input type="range" id="calc-persons" min="1" max="8" value="2" class="w-full" oninput="updateCostCalc()">
+                                <input type="range" id="calc-persons" min="1" max="8" value="2" class="w-full" oninput="updateCostCalc()" aria-label="Anzahl Personen">
                             </div>
                             <div class="mb-4">
                                 <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Liter/Tag pro Person: <span id="val-liters">2</span></label>
-                                <input type="range" id="calc-liters" min="1" max="5" value="2" class="w-full" oninput="updateCostCalc()">
+                                <input type="range" id="calc-liters" min="1" max="5" value="2" class="w-full" oninput="updateCostCalc()" aria-label="Liter pro Person pro Tag">
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Preis Flaschenwasser/L: <span id="val-price">0.60 €</span></label>
-                                <input type="range" id="calc-price" min="0.19" max="1.50" value="0.60" step="0.01" class="w-full" oninput="updateCostCalc()">
+                                <input type="range" id="calc-price" min="0.19" max="1.50" value="0.60" step="0.01" class="w-full" oninput="updateCostCalc()" aria-label="Preis pro Liter Flaschenwasser">
                             </div>
                         </div>
                         <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl border border-green-100 dark:border-green-800">
@@ -2246,7 +2431,7 @@
                         <div class="text-xs text-slate-500 dark:text-slate-400 mb-4">
                             Annahmen: Filterkosten 400€, Wartung 100€/Jahr, Energie 10€/Jahr
                         </div>
-                        <button onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'}); document.getElementById('cost-calc-modal').remove();" class="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition">
+                        <button onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'}); document.getElementById('cost-calc-modal').remove();" class="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition" aria-label="Jetzt Filter wählen und sparen">
                             Jetzt Filter wählen & Sparen &rarr;
                         </button>
                     </div>
@@ -2286,7 +2471,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <div class="text-center">
                                 <div class="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mx-auto mb-2">
-                                    <i class="fa-solid fa-droplet text-blue-500 dark:text-blue-400 text-2xl"></i>
+                                    <i class="fa-solid fa-droplet text-blue-500 dark:text-blue-400 text-2xl" aria-hidden="true"></i>
                                 </div>
                                 <p class="text-sm text-slate-600 dark:text-slate-400">Simulation gestartet</p>
                             </div>
@@ -2295,7 +2480,7 @@
                     <p class="text-slate-600 dark:text-slate-300 mb-4 text-sm">
                         PFAS gelangen über Industrieabwässer, Löschschaum und Verbraucherprodukte in die Umwelt. Sie reichern sich im Grundwasser an und gelangen so in unser Trinkwasser.
                     </p>
-                    <button onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'}); document.getElementById('water-sim-modal').remove();" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition">
+                    <button onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'}); document.getElementById('water-sim-modal').remove();" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition" aria-label="Kreislauf unterbrechen durch Filterkauf">
                         Kreislauf unterbrechen (Filter kaufen) &rarr;
                     </button>
                 </div>`;
@@ -2310,20 +2495,20 @@
                         Wählen Sie Ihren Vermieter-Brief aus. Alle Vorlagen sind anwaltlich geprüft und entsprechen der aktuellen Rechtslage.
                     </p>
                     <div class="grid grid-cols-1 gap-3">
-                        <button onclick="generateDocument('info')" class="w-full p-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-left transition">
+                        <button onclick="generateDocument('info')" class="w-full p-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-left transition" aria-label="Informationsschreiben an Vermieter generieren">
                             <div class="font-bold text-slate-900 dark:text-white">Informationsschreiben an Vermieter</div>
                             <div class="text-slate-600 dark:text-slate-400 text-sm">Höfliche Information über Filtereinbau</div>
                         </button>
-                        <button onclick="generateDocument('request')" class="w-full p-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-left transition">
+                        <button onclick="generateDocument('request')" class="w-full p-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-left transition" aria-label="Antrag auf Mietminderung generieren">
                             <div class="font-bold text-slate-900 dark:text-white">Antrag auf Mietminderung</div>
                             <div class="text-slate-600 dark:text-slate-400 text-sm">Bei nachgewiesenen Grenzwertüberschreitungen</div>
                         </button>
-                        <button onclick="generateDocument('permission')" class="w-full p-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-left transition">
+                        <button onclick="generateDocument('permission')" class="w-full p-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-left transition" aria-label="Genehmigungsersuchen generieren">
                             <div class="font-bold text-slate-900 dark:text-white">Genehmigungsersuchen</div>
                             <div class="text-slate-600 dark:text-slate-400 text-sm">Für Untertisch-Installationen</div>
                         </button>
                     </div>
-                    <button onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'}); document.getElementById('doc-gen-modal').remove();" class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition">
+                    <button onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'}); document.getElementById('doc-gen-modal').remove();" class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition" aria-label="Zu den mieterfreundlichen Filtern">
                         Zu den mieterfreundlichen Filtern &rarr;
                     </button>
                 </div>`;
@@ -2354,7 +2539,7 @@
             document.getElementById('analysetool').scrollIntoView({ behavior: 'smooth' });
             
             document.getElementById('results-plz').innerText = plz;
-            document.getElementById('ai-summary').innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> KI analysiert regionale Wasserdaten...';
+            document.getElementById('ai-summary').innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i> KI analysiert regionale Wasserdaten...';
             
             // Hide all action panels
             document.getElementById('action-crit').classList.add('hidden');
@@ -2392,6 +2577,7 @@
             // Ergebnisse setzen
             document.getElementById('pfas-result').innerText = pfasVal + " ng/L";
             document.getElementById('pfas-bar').style.width = Math.min(pfasVal, 100) + "%";
+            document.getElementById('pfas-bar').setAttribute('aria-valuenow', Math.min(pfasVal, 100));
             
             // Vergleichswert
             document.getElementById('comparison-value').innerText = pfasVal + " ng/L";
@@ -2436,6 +2622,16 @@
                 document.getElementById('ai-summary').innerText = aiText;
                 document.getElementById('analysis-loading').classList.add('hidden');
                 showNotification("Analyse für PLZ " + plz + " fertig", "success");
+                
+                // Announce results for screen readers
+                const announcement = `Analyse fertig: PFAS Wert ${pfasVal} ng/L, Risiko Level ${riskScore}`;
+                const liveRegion = document.createElement('div');
+                liveRegion.setAttribute('aria-live', 'polite');
+                liveRegion.setAttribute('aria-atomic', 'true');
+                liveRegion.className = 'sr-only';
+                liveRegion.textContent = announcement;
+                document.body.appendChild(liveRegion);
+                setTimeout(() => liveRegion.remove(), 1000);
             }, 2000);
         }
         
@@ -2472,7 +2668,9 @@
             
             pfasMap = L.map('pfas-map', { 
                 scrollWheelZoom: false,
-                zoomControl: false
+                zoomControl: false,
+                keyboard: true,
+                preferCanvas: true // Better performance
             }).setView([51.1657, 10.4515], 6);
             
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { 
@@ -2511,6 +2709,12 @@
             
             // Add zoom control
             L.control.zoom({ position: 'topright' }).addTo(pfasMap);
+            
+            // Add aria-label to map for screen readers
+            const mapContainer = document.getElementById('pfas-map');
+            if (mapContainer) {
+                mapContainer.setAttribute('aria-label', 'Interaktive Karte der PFAS Belastung in Deutschland. Nutzen Sie Tab und Pfeiltasten zur Navigation.');
+            }
         }
         
         function initHeroChart() { 
@@ -2533,33 +2737,20 @@
                     options: { 
                         scales: {x:{display:false},y:{display:false}}, 
                         plugins:{legend:{display:false}}, 
-                        maintainAspectRatio: false 
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1000
+                        }
                     } 
                 }); 
             }
         }
         
-        function initMolecule3DVisualization() { 
-            const c = document.getElementById('hero-molecule-3d'); 
-            if(c) {
-                c.innerHTML = `
-                    <div class="molecule-3d">
-                        <div class="atom-3d carbon" style="width:50px;height:50px;top:50%;left:50%;transform:translate(-50%,-50%)">C</div>
-                        <div class="atom-3d fluorine" style="width:30px;height:30px;top:20%;left:20%">F</div>
-                        <div class="atom-3d fluorine" style="width:30px;height:30px;top:20%;left:80%">F</div>
-                        <div class="atom-3d oxygen" style="width:35px;height:35px;top:80%;left:20%">O</div>
-                        <div class="atom-3d oxygen" style="width:35px;height:35px;top:80%;left:80%">O</div>
-                    </div>`;
-            }
-        }
-        
-        function initRadarCharts() { 
+        function initTrendChart() {
             if (typeof Chart === 'undefined') return; 
-            
-            // Trend Chart
-            const trendCtx = document.getElementById('trendChart')?.getContext('2d'); 
-            if(trendCtx) {
-                new Chart(trendCtx, { 
+            const ctx = document.getElementById('trendChart')?.getContext('2d'); 
+            if(ctx) {
+                new Chart(ctx, { 
                     type: 'line', 
                     data: { 
                         labels: ['2015','2017','2019','2021','2023','2025'], 
@@ -2586,15 +2777,20 @@
                             x: {
                                 grid: { color: 'rgba(0,0,0,0.05)' }
                             }
+                        },
+                        animation: {
+                            duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1000
                         }
                     } 
                 }); 
             }
-            
-            // Source Chart
-            const sourceCtx = document.getElementById('sourceChart')?.getContext('2d'); 
-            if(sourceCtx) {
-                new Chart(sourceCtx, { 
+        }
+        
+        function initSourceChart() {
+            if (typeof Chart === 'undefined') return; 
+            const ctx = document.getElementById('sourceChart')?.getContext('2d'); 
+            if(ctx) {
+                new Chart(ctx, { 
                     type: 'bar', 
                     data: { 
                         labels: ['Industrie','Flughäfen','Militär','Deponien'], 
@@ -2614,15 +2810,20 @@
                                 beginAtZero: true,
                                 grid: { color: 'rgba(0,0,0,0.05)' }
                             }
+                        },
+                        animation: {
+                            duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1000
                         }
                     } 
                 }); 
             }
-            
-            // Chemical Chart
-            const chemCtx = document.getElementById('chemicalChart')?.getContext('2d'); 
-            if(chemCtx) {
-                new Chart(chemCtx, { 
+        }
+        
+        function initChemicalChart() {
+            if (typeof Chart === 'undefined') return; 
+            const ctx = document.getElementById('chemicalChart')?.getContext('2d'); 
+            if(ctx) {
+                new Chart(ctx, { 
                     type: 'doughnut', 
                     data: { 
                         labels: ['PFOA','PFOS','Andere'], 
@@ -2639,9 +2840,26 @@
                                 position: 'bottom',
                                 labels: { padding: 20 }
                             }
+                        },
+                        animation: {
+                            duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1000
                         }
                     } 
                 }); 
+            }
+        }
+        
+        function initMolecule3DVisualization() { 
+            const c = document.getElementById('hero-molecule-3d'); 
+            if(c) {
+                c.innerHTML = `
+                    <div class="molecule-3d">
+                        <div class="atom-3d carbon" style="width:50px;height:50px;top:50%;left:50%;transform:translate(-50%,-50%)">C</div>
+                        <div class="atom-3d fluorine" style="width:30px;height:30px;top:20%;left:20%">F</div>
+                        <div class="atom-3d fluorine" style="width:30px;height:30px;top:20%;left:80%">F</div>
+                        <div class="atom-3d oxygen" style="width:35px;height:35px;top:80%;left:20%">O</div>
+                        <div class="atom-3d oxygen" style="width:35px;height:35px;top:80%;left:80%">O</div>
+                    </div>`;
             }
         }
         
@@ -2681,7 +2899,7 @@
                 item.className = `flex items-start gap-3 p-3 ${bgColor} ${borderColor} rounded-xl border`;
                 item.innerHTML = `
                     <div class="mt-1">
-                        <i class="fa-solid ${icon} ${iconColor} text-xs"></i>
+                        <i class="fa-solid ${icon} ${iconColor} text-xs" aria-hidden="true"></i>
                     </div>
                     <div class="flex-grow">
                         <div class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-0.5">${update.location}</div>
@@ -2698,6 +2916,12 @@
             document.getElementById('legal-title').innerText = type.toUpperCase(); 
             document.getElementById('legal-content').innerHTML = legalContent[type] || '<p>Inhalt nicht verfügbar.</p>'; 
             document.getElementById('legal-modal').classList.remove('hidden'); 
+            
+            // Focus first focusable element in modal
+            setTimeout(() => {
+                const firstFocusable = document.querySelector('#legal-modal button, #legal-modal [href], #legal-modal input, #legal-modal select, #legal-modal textarea, #legal-modal [tabindex]:not([tabindex="-1"])');
+                if (firstFocusable) firstFocusable.focus();
+            }, 10);
         }
         
         function closeLegalModal() { 
@@ -2714,10 +2938,12 @@
             if (type === 'error') bgColor = 'bg-red-600';
             
             el.className = `${bgColor} text-white px-6 py-3 rounded-xl shadow-lg text-sm font-bold transform transition-all duration-300 translate-x-64`;
+            el.setAttribute('role', 'alert');
+            el.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
             el.innerText = msg;
             
             if (type === 'loading') {
-                el.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> ${msg}`;
+                el.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i> ${msg}`;
             }
             
             container.appendChild(el);
@@ -2743,6 +2969,7 @@
         function trackAffiliateClick(product) { 
             console.log("Affiliate click:", product);
             // In einer echten Implementierung würde hier ein Tracking erfolgen
+            showNotification("Sie werden zum Partner weitergeleitet...", "loading");
         }
         
         function openPublication(id) { 
@@ -2785,23 +3012,30 @@
         
         function toggleCheck(el) { 
             const icon = el.querySelector('i'); 
-            if(icon.classList.contains('opacity-0')) { 
+            const isChecked = icon.classList.contains('opacity-0');
+            if(isChecked) { 
                 icon.classList.remove('opacity-0'); 
                 el.classList.add('line-through', 'opacity-50'); 
+                el.setAttribute('aria-checked', 'true');
             } else { 
                 icon.classList.add('opacity-0'); 
                 el.classList.remove('line-through', 'opacity-50'); 
+                el.setAttribute('aria-checked', 'false');
             } 
         }
         
         function toggleFAQ(n) { 
             const el = document.getElementById(`faq-${n}`);
             const icon = document.getElementById(`icon-${n}`);
+            const button = document.querySelector(`button[aria-controls="faq-${n}"]`);
             if(el) {
-                el.classList.toggle('hidden');
+                const isHidden = el.classList.toggle('hidden');
                 if (icon) {
                     icon.classList.toggle('fa-chevron-down');
                     icon.classList.toggle('fa-chevron-up');
+                }
+                if (button) {
+                    button.setAttribute('aria-expanded', !isHidden);
                 }
             }
         }
@@ -2812,23 +3046,39 @@
         }
         
         function toggleChat() { 
-            document.getElementById('chatbot-window').classList.toggle('hidden'); 
+            const chatWindow = document.getElementById('chatbot-window');
+            const toggleButton = document.querySelector('#chatbot button[onclick="toggleChat()"]');
+            const isHidden = chatWindow.classList.toggle('hidden');
+            
+            if (toggleButton) {
+                toggleButton.setAttribute('aria-expanded', !isHidden);
+                toggleButton.setAttribute('aria-label', isHidden ? 'Chat öffnen' : 'Chat schließen');
+            }
+            
+            if (!isHidden) {
+                // Focus input when opening
+                setTimeout(() => {
+                    const input = document.getElementById('chat-input');
+                    if (input) input.focus();
+                }, 100);
+            }
         }
         
         async function sendMessage() { 
             const input = document.getElementById('chat-input');
-            const msg = input.value; 
+            const msg = input.value.trim(); 
             if(!msg) return;
             
             const messages = document.getElementById('chat-messages');
             
             // User Message
-            messages.innerHTML += `
-                <div class="flex flex-row-reverse mb-4">
-                    <div class="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none max-w-[80%]">
-                        ${msg}
-                    </div>
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'flex flex-row-reverse mb-4';
+            userMsgDiv.innerHTML = `
+                <div class="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none max-w-[80%]">
+                    ${msg}
                 </div>`;
+            messages.appendChild(userMsgDiv);
             
             input.value = "";
             
@@ -2837,7 +3087,7 @@
             thinking.className = 'flex mb-4';
             thinking.innerHTML = `
                 <div class="bg-slate-100 dark:bg-slate-700 p-3 rounded-2xl rounded-tl-none max-w-[80%]">
-                    <i class="fa-solid fa-spinner fa-spin mr-2"></i> Denke nach...
+                    <i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i> Denke nach...
                 </div>`;
             messages.appendChild(thinking);
             
@@ -2868,14 +3118,24 @@
             
             thinking.remove();
             
-            messages.innerHTML += `
-                <div class="flex mb-4">
-                    <div class="bg-slate-100 dark:bg-slate-700 p-3 rounded-2xl rounded-tl-none max-w-[80%]">
-                        ${reply}
-                    </div>
+            const botMsgDiv = document.createElement('div');
+            botMsgDiv.className = 'flex mb-4';
+            botMsgDiv.innerHTML = `
+                <div class="bg-slate-100 dark:bg-slate-700 p-3 rounded-2xl rounded-tl-none max-w-[80%]">
+                    ${reply}
                 </div>`;
+            messages.appendChild(botMsgDiv);
             
             messages.scrollTop = messages.scrollHeight;
+            
+            // Announce new message for screen readers
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.className = 'sr-only';
+            announcement.textContent = 'HydroBot hat geantwortet';
+            document.body.appendChild(announcement);
+            setTimeout(() => announcement.remove(), 1000);
         }
         
         function handleChatEnter(e) { 
@@ -2903,7 +3163,7 @@
             if(filtered.length === 0) { 
                 grid.innerHTML = `
                     <div class="col-span-3 text-center text-slate-500 py-8">
-                        <i class="fa-solid fa-magnifying-glass mb-2 text-2xl"></i>
+                        <i class="fa-solid fa-magnifying-glass mb-2 text-2xl" aria-hidden="true"></i>
                         <p>Keine Einträge gefunden. Versuchen Sie einen anderen Suchbegriff.</p>
                     </div>`; 
                 return; 
@@ -2919,9 +3179,18 @@
                 const card = document.createElement('div');
                 card.className = "bg-slate-800 rounded-2xl p-6 border border-slate-700 hover:border-brand-500 transition hover:-translate-y-1 group cursor-pointer relative overflow-hidden";
                 card.onclick = () => openWikiModal(item);
+                card.setAttribute('role', 'button');
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('aria-label', `${item.term} öffnen: ${item.short}`);
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openWikiModal(item);
+                    }
+                });
                 
                 card.innerHTML = `
-                    <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-xl -mr-5 -mt-5 group-hover:bg-brand-500/20 transition"></div>
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-xl -mr-5 -mt-5 group-hover:bg-brand-500/20 transition" aria-hidden="true"></div>
                     <div class="flex justify-between items-start mb-4">
                         <h3 class="text-xl font-bold text-white group-hover:text-brand-400 transition">${item.term}</h3>
                         <span class="text-[10px] uppercase font-bold px-2 py-1 rounded border ${badgeColor}">${item.cat}</span>
@@ -2929,7 +3198,7 @@
                     <p class="text-slate-400 text-sm leading-relaxed mb-4">${item.short}</p>
                     <div class="flex items-center gap-2 text-xs font-bold text-brand-500 group-hover:text-brand-400">
                         Mehr erfahren 
-                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition" aria-hidden="true"></i>
                     </div>`;
                 
                 grid.appendChild(card);
@@ -2946,12 +3215,14 @@
             document.querySelectorAll('button[data-category]').forEach(btn => {
                 btn.classList.remove('bg-slate-700', 'text-white');
                 btn.classList.add('bg-slate-800', 'text-slate-300');
+                btn.setAttribute('aria-pressed', 'false');
             });
             
             const activeBtn = document.querySelector(`button[data-category="${category}"]`);
             if (activeBtn) {
                 activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
                 activeBtn.classList.add('bg-slate-700', 'text-white');
+                activeBtn.setAttribute('aria-pressed', 'true');
             }
             
             renderWiki("", category);
@@ -2965,7 +3236,7 @@
                         <div class="text-sm font-bold text-slate-900 dark:text-white mb-2">Passendes Produkt</div>
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center">
-                                <i class="fa-solid fa-filter"></i>
+                                <i class="fa-solid fa-filter" aria-hidden="true"></i>
                             </div>
                             <div>
                                 <div class="font-bold text-slate-900 dark:text-white">${item.product}</div>
@@ -2982,8 +3253,8 @@
                             <h3 class="text-2xl font-bold text-slate-900 dark:text-white">${item.term}</h3>
                             <div class="text-slate-500 dark:text-slate-400 text-sm mt-1">${item.cat.toUpperCase()}</div>
                         </div>
-                        <button onclick="document.getElementById('wiki-modal').remove()" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
-                            <i class="fa-solid fa-times text-xl"></i>
+                        <button onclick="document.getElementById('wiki-modal').remove()" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300" aria-label="Modal schließen">
+                            <i class="fa-solid fa-times text-xl" aria-hidden="true"></i>
                         </button>
                     </div>
                     
@@ -2995,7 +3266,7 @@
                     
                     <div class="pt-6 border-t border-slate-200 dark:border-slate-800">
                         <div class="text-xs text-slate-500 dark:text-slate-400">
-                            <i class="fa-solid fa-circle-info mr-1"></i> Quelle: Wasserwissen-Datenbank. Stand: ${new Date().getFullYear()}
+                            <i class="fa-solid fa-circle-info mr-1" aria-hidden="true"></i> Quelle: Wasserwissen-Datenbank. Stand: ${new Date().getFullYear()}
                         </div>
                     </div>
                 </div>`;
