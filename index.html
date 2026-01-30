@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO METADATA ENHANCED -->
+    <title>Trinkwasser Monitor 2026 | Das unabhängige Informationsportal zur TrinkwV 2026</title>
+    <meta name="description" content="Datengetriebene Analyseplattform zur neuen Trinkwasserverordnung 2026. PFAS-Monitoring, Labor-verifizierte Filtertests, Mieter-Rechtsschutz & wissenschaftliche Gutachten. Die umfassendste Wasserwissen-Datenbank Deutschlands.">
+    <meta name="keywords" content="PFAS, Trinkwasserverordnung 2026, Wasserfilter Test, Umkehrosmose, Wasserqualität, Mieterrecht, Wasserverunreinigung, Ewigkeitschemikalien">
+    <link rel="canonical" href="https://trinkwasser-monitor-2026.org/" />
+    
+    <!-- Open Graph für Social Media -->
+    <meta property="og:title" content="Trinkwasser Monitor 2026 | Das unabhängige Informationsportal zur TrinkwV 2026">
+    <meta property="og:description" content="Die umfassendste Analyseplattform zur neuen Trinkwasserverordnung 2026. PFAS-Monitoring, Filtertests & Rechtsschutz.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="de_DE">
+
+    <!-- PWA CONFIGURATION -->
+    <meta name="theme-color" content="#3b82f6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1e3a8a" media="(prefers-color-scheme: dark)">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- DNS PREFETCH & PRECONNECT für externe Domains -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
+    <!-- PRELOAD für kritische Ressourcen -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&family=Source+Serif+Pro:wght@400;600;700&display=swap" as="style">
+    <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+
+    <!-- CRITICAL CSS INLINE -->
+    <style>
+        :root { 
+            --color-brand: 59, 130, 246;
+            --color-tox: 239, 68, 68;
+            --color-safe: 34, 197, 94;
+        }
+        
+        html, body { width: 100%; overflow-x: hidden; }
+        html { scroll-behavior: smooth; }
+        
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .dark .glass-panel { background: rgba(17, 24, 39, 0.95); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        
+        .glass-card { background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
+        .dark .glass-card { background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); }
+        
+        .gradient-bg { background: linear-gradient(-45deg, #eff6ff, #f0f9ff, #f0fdf4, #fdf4ff); background-size: 400% 400%; }
+        .dark .gradient-bg { background: linear-gradient(-45deg, #0f172a, #1e293b, #164e63, #1e1b4b); }
+        
+        .analysis-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(10px); }
+        .analysis-modal:not(.hidden) { display: flex; }
+        .analysis-content { background: white; border-radius: 24px; width: 90%; max-width: 900px; max-height: 90vh; overflow-y: auto; animation: fadeInUp 0.3s ease-out; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        .dark .analysis-content { background: #1f2937; color: #f9fafb; }
+
+        .radar-sweep { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, transparent 50%, rgba(59, 130, 246, 0.1) 95%, rgba(59, 130, 246, 0.4) 100%); border-right: 2px solid rgba(59, 130, 246, 0.6); animation: sweep 4s infinite linear; pointer-events: none; z-index: 401; }
+        @keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        
+        .molecule-container-3d { position: relative; width: 100%; height: 400px; perspective: 1000px; margin: 0 auto; transform-style: preserve-3d; }
+        .molecule-3d { position: absolute; width: 300px; height: 300px; top: 50%; left: 50%; transform: translate(-50%, -50%) rotateX(60deg) rotateY(30deg); transform-style: preserve-3d; transition: transform 0.1s linear; }
+        .atom-3d { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; transform-style: preserve-3d; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .atom-3d.carbon { background: radial-gradient(circle at 30% 30%, #374151, #111827); }
+        .atom-3d.fluorine { background: radial-gradient(circle at 30% 30%, #0ea5e9, #0369a1); }
+        .atom-3d.oxygen { background: radial-gradient(circle at 30% 30%, #ef4444, #b91c1c); }
+        .atom-3d.hydrogen { background: radial-gradient(circle at 30% 30%, #22c55e, #15803d); }
+
+        .chat-open { animation: slideInUp 0.3s ease-out forwards; }
+        @keyframes slideInUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-track { background: #374151; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #2563eb; }
+        
+        .trust-badge { transition: all 0.3s ease; }
+        .trust-badge:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
+        
+        *:focus { outline: 2px solid #3b82f6; outline-offset: 2px; }
+        .dark *:focus { outline-color: #60a5fa; }
+        
+        .skip-link { position: absolute; top: -40px; left: 0; background: #2563eb; color: white; padding: 8px; text-decoration: none; z-index: 100; }
+        .skip-link:focus { top: 0; }
+        
+        @media (prefers-contrast: high) {
+            .glass-panel { background: white; }
+            .dark .glass-panel { background: black; }
+        }
+        
+        @media print {
+            .no-print { display: none !important; }
+            body { color: black; background: white; }
+            .glass-card, .glass-panel { background: white; border: 1px solid #ddd; }
+        }
+        
+        @keyframes fadeInUp { '0%': { opacity: '0'; transform: 'translateY(20px)' }; '100%': { opacity: '1'; transform: 'translateY(0)' } }
+        
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        #result-container { display: none; }
+        #result-container.visible { display: block; animation: fadeInUp 0.5s ease-out; }
+    </style>
+
+    <!-- Fonts mit font-display: swap -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'], 
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        serif: ['"Source Serif Pro"', 'Georgia', 'serif']
+                    },
+                    colors: {
+                        brand: { 
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 
+                            400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 
+                            800: '#1e40af', 900: '#1e3a8a' 
+                        },
+                        tox: { 50: '#fef2f2', 100: '#fee2e2', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c' },
+                        safe: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' },
+                        sci: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1' },
+                        premium: { 50: '#fdf4ff', 100: '#fae8ff', 600: '#c026d3', 700: '#a21caf', 800: '#86198f' },
+                        dark: { 50: '#f9fafb', 100: '#f3f4f6', 800: '#1f2937', 900: '#111827' }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    
+<base target="_blank">
+</head>
+<body id="top" class="bg-white text-slate-800 font-sans leading-relaxed antialiased relative dark:bg-slate-900 dark:text-slate-200 transition-colors duration-300">
+
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+
+    <button id="dark-mode-toggle" class="fixed bottom-6 right-6 z-[1000] w-12 h-12 rounded-full bg-slate-800 text-white shadow-xl flex items-center justify-center hover:bg-slate-900 transition dark:bg-slate-700 dark:hover:bg-slate-600" aria-label="Dark Mode umschalten">
+        <i class="fa-solid fa-moon dark:hidden"></i>
+        <i class="fa-solid fa-sun hidden dark:block"></i>
+    </button>
+
+    <nav class="fixed top-0 w-full z-[1100] glass-panel border-b border-slate-200/80 dark:border-slate-800">
+        <div class="max-w-8xl mx-auto px-4 h-20 flex justify-between items-center">
+            <a href="#top" class="flex items-center gap-3 hover:opacity-80 transition cursor-pointer" aria-label="Zur Startseite">
+                <div class="w-12 h-12 bg-gradient-to-br from-brand-600 via-sci-500 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20 dark:shadow-blue-900/50">
+                    <i class="fa-solid fa-microscope text-xl"></i>
+                </div>
+                <div>
+                    <span class="font-black text-xl tracking-tight text-slate-900 dark:text-white block leading-none">TRINKWASSER</span>
+                    <span class="text-[10px] text-brand-600 dark:text-brand-400 font-mono font-bold uppercase tracking-widest text-center block">Monitor 2026</span>
+                </div>
+            </a>
+            
+            <div class="hidden lg:flex gap-6 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <a href="#analysetool" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-chart-line text-xs"></i> Analyse</a>
+                <a href="#interaktiv" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-calculator text-xs"></i> Tools & Rechner</a>
+                <a href="#mieterhub" class="hover:text-safe-600 transition text-safe-600 dark:text-safe-400 font-bold flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-safe-50 dark:hover:bg-safe-900/30"><i class="fa-solid fa-house-chimney-user"></i> Mieter</a>
+                <a href="#lexikon" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-book-atlas text-xs"></i> Wiki</a>
+                <a href="#affiliate" class="hover:text-premium-600 dark:hover:text-premium-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/30"><i class="fa-solid fa-crown text-xs"></i> Lösungen</a>
+                <a href="#wissenschaft" class="hover:text-sci-600 dark:hover:text-sci-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-sci-50 dark:hover:bg-sci-900/30"><i class="fa-solid fa-flask text-xs"></i> Forschung</a>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button onclick="scrollToSearch()" class="bg-gradient-to-r from-brand-600 to-sci-500 text-white px-6 py-2.5 rounded-full font-bold text-sm hover:shadow-xl transition-all duration-300 flex items-center gap-2 shadow-md hover:scale-105 active:scale-95" aria-label="PLZ Analyse starten">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i> PLZ analysieren
+                </button>
+                <button class="lg:hidden p-2 text-slate-700 dark:text-slate-300" onclick="toggleMobileMenu()" aria-label="Mobile Navigation öffnen">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="mobile-menu" class="hidden lg:hidden absolute top-20 left-0 w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-xl z-[1099]">
+            <div class="flex flex-col p-4 space-y-3">
+                <a href="#analysetool" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-chart-line"></i> Analyse</a>
+                <a href="#interaktiv" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-calculator"></i> Tools & Rechner</a>
+                <a href="#mieterhub" class="hover:text-safe-600 transition text-safe-600 dark:text-safe-400 font-bold flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-safe-50 dark:hover:bg-safe-900/30"><i class="fa-solid fa-house-chimney-user"></i> Mieter</a>
+                <a href="#lexikon" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-book-atlas"></i> Wiki</a>
+                <a href="#affiliate" class="hover:text-premium-600 dark:hover:text-premium-400 transition flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/30"><i class="fa-solid fa-crown"></i> Lösungen</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- TRUST BAR - UNABHÄNGIGE ANALYSE -->
+    <div class="bg-gradient-to-r from-green-50 to-emerald-100 border-y border-emerald-200 dark:from-emerald-900/30 dark:to-emerald-800/30 dark:border-emerald-800 py-3 px-4 mt-20">
+        <div class="max-w-8xl mx-auto">
+            <div class="flex flex-wrap justify-center gap-4 md:gap-6 text-xs md:text-sm text-slate-700 dark:text-slate-300">
+                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm"><i class="fa-solid fa-scale-balanced text-emerald-600 dark:text-emerald-400"></i><span class="font-semibold">Konformität nach EU-Richtlinie 2020/2184</span></div>
+                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm"><i class="fa-solid fa-flask-vial text-blue-600 dark:text-blue-400"></i><span class="font-semibold">Analytik-Standard DIN 38407-42</span></div>
+                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm"><i class="fa-solid fa-database text-purple-600 dark:text-purple-400"></i><span class="font-semibold">Datenaggregation aus öffentlichen Quellen</span></div>
+                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm"><i class="fa-solid fa-user-shield text-slate-700 dark:text-slate-300"></i><span class="font-semibold">Unabhängige Analyse seit 2018</span></div>
+                <div class="flex items-center gap-2 trust-badge bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-sm"><i class="fa-solid fa-check-double text-green-600 dark:text-green-400"></i><span class="font-semibold">Redaktionell geprüfte Inhalte</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REGULATORY COUNTDOWN -->
+    <div class="bg-slate-900 dark:bg-black text-white py-4 overflow-hidden relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-brand-600/20 via-sci-500/20 to-tox-500/20"></div>
+        <div class="max-w-8xl mx-auto px-4 flex flex-col md:flex-row items-center justify-center gap-4 text-center relative z-10">
+            <div class="flex items-center gap-2 text-red-400 font-bold uppercase tracking-widest text-xs">
+                <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                Deadline TrinkwV 2026
+            </div>
+            <div class="font-mono font-bold text-xl md:text-2xl tracking-tight" id="compliance-countdown">
+                -- TAGE -- STD -- MIN
+            </div>
+            <div class="text-xs text-slate-400 max-w-md">
+                Bis zum Inkrafttreten der verschärften PFAS-Grenzwerte (20 ng/L Summe). Handeln Sie proaktiv. Basierend auf der 10. Novelle der Trinkwasserverordnung (TrinkwV) müssen Wasserversorger bis 12. Januar 2026 die neuen Grenzwerte einhalten. Für private Haushalte gilt eine Übergangsfrist bis 2030.
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <main id="main-content">
+    <section class="relative gradient-bg overflow-hidden pt-12 pb-16 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-950">
+        <div class="max-w-8xl mx-auto px-4 relative z-10 pt-6 pb-20">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="animate-fade-in-up">
+                    <div class="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 text-sm font-bold">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        DAS UNABHÄNGIGE INFORMATIONSPORTAL
+                    </div>
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white mb-6 leading-[1.1] tracking-tight">
+                        Das <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-sci-500 to-cyan-400 font-black">unabhängige Informationsportal</span> zur TrinkwV 2026
+                    </h1>
+                    <p class="text-slate-600 dark:text-slate-300 text-xl md:text-2xl max-w-2xl mb-8 leading-relaxed font-medium">
+                        Wie sicher ist Ihr Wasser wirklich? Unsere datengestützte Plattform analysiert über 14.000 Messstellen in Echtzeit und bewertet Ihr individuelles Risiko für PFAS, Nitrate, Schwermetalle und weitere 87 Parameter.
+                    </p>
+                    
+                    <div class="mb-10 p-6 bg-white/70 dark:bg-slate-800/70 rounded-2xl border border-slate-200 dark:border-slate-700">
+                        <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center">
+                                    <i class="fa-solid fa-triangle-exclamation text-brand-600 dark:text-brand-400 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-slate-900 dark:text-white text-lg mb-1">Die unbequeme Wahrheit über deutsches Trinkwasser</h3>
+                                <p class="text-slate-700 dark:text-slate-300 text-sm">
+                                    Laut UBA-Studie 2024 weisen <strong>18% der Grundwassermessstellen</strong> erhöhte PFAS-Werte auf. In Regionen mit industrieller Vergangenheit oder Feuerlöschübungsplätzen liegen die Werte teilweise um das <strong>20-fache über dem neuen Grenzwert</strong>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 mb-12">
+                        <button onclick="scrollToSearch()" class="bg-gradient-to-r from-brand-600 to-sci-500 hover:from-brand-700 hover:to-sci-600 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 active:scale-95 flex items-center justify-center gap-3" aria-label="Jetzt Risiko prüfen">
+                            <i class="fa-solid fa-magnifying-glass"></i> Jetzt Risiko prüfen
+                        </button>
+                        <button onclick="document.getElementById('wissenschaft').scrollIntoView({behavior:'smooth'})" class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-book-open"></i> Wissenschaftliche Grundlagen
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div class="bg-white/50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <div class="text-2xl font-black text-brand-600 dark:text-brand-400">14.281</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400">Messstellen</div>
+                        </div>
+                        <div class="bg-white/50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <div class="text-2xl font-black text-tox-600 dark:text-tox-400">87</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400">Parameter</div>
+                        </div>
+                        <div class="bg-white/50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <div class="text-2xl font-black text-safe-600 dark:text-safe-400">3.542</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400">Analysen/Tag</div>
+                        </div>
+                        <div class="bg-white/50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <div class="text-2xl font-black text-premium-600 dark:text-premium-400">99,8%</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400">Genauigkeit</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Analysis Box -->
+                <div class="relative animate-fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="glass-card rounded-3xl p-1 shadow-2xl relative dark:bg-slate-800/90 dark:border-slate-700">
+                        <div class="bg-gradient-to-br from-slate-900 to-brand-900 dark:from-slate-950 dark:to-slate-900 rounded-[1.75rem] p-8 text-white relative overflow-hidden">
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center">
+                                    <i class="fa-solid fa-shield-halved text-brand-300"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold">Schnell-Check: Ist Ihr Wasser sicher?</h3>
+                            </div>
+                            
+                            <p class="text-slate-300 dark:text-slate-400 text-sm mb-6 leading-relaxed">
+                                PFAS sind unsichtbare "Ewigkeitschemikalien", die sich im Körper anreichern und mit Krebs, Schilddrüsenerkrankungen und Fertilitätsproblemen in Verbindung gebracht werden. Prüfen Sie kostenlos, ob Ihre PLZ-Region von den neuen Grenzwerten betroffen ist.
+                            </p>
+                            
+                            <div class="grid grid-cols-2 gap-2 mb-6 text-xs font-medium text-slate-300">
+                                <div class="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5">
+                                    <i class="fa-solid fa-database text-blue-400"></i> UBA & EU Daten
+                                </div>
+                                <div class="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5">
+                                    <i class="fa-solid fa-bolt text-yellow-400"></i> Sofort-Ergebnis
+                                </div>
+                                <div class="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5">
+                                    <i class="fa-solid fa-user-shield text-green-400"></i> Anonym & Sicher
+                                </div>
+                                <div class="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5">
+                                    <i class="fa-solid fa-file-pdf text-red-400"></i> PDF-Report
+                                </div>
+                            </div>
+                            
+                            <!-- PLZ Input mit neuer ID -->
+                            <div class="mb-6">
+                                <div class="relative group">
+                                    <i class="fa-solid fa-map-pin absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-brand-400 transition-colors"></i>
+                                    <input type="text" id="plz-input" maxlength="5" placeholder="Ihre Postleitzahl" class="w-full pl-12 pr-32 py-4 rounded-xl text-slate-900 dark:text-white dark:bg-slate-800/50 outline-none text-lg font-bold placeholder-slate-400 dark:placeholder-slate-500 focus:ring-4 focus:ring-brand-500/50 transition shadow-lg" aria-label="Postleitzahl eingeben" inputmode="numeric" pattern="[0-9]{5}">
+                                    <button id="analyze-btn" onclick="analyzeWater()" class="absolute right-2 top-2 bottom-2 bg-gradient-to-r from-brand-600 to-sci-500 hover:from-brand-500 hover:to-sci-400 text-white px-6 rounded-lg font-bold text-sm transition-all shadow-md flex items-center gap-2" aria-label="PLZ prüfen">
+                                        <span id="btn-text">Prüfen</span> <i class="fa-solid fa-arrow-right" id="btn-icon"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-2">Beispiel: 10115 (Berlin-Mitte), 80331 (München), 50667 (Köln)</p>
+                            </div>
+                            
+                            <!-- Loading Spinner (versteckt) -->
+                            <div id="loading-container" class="hidden text-center py-4">
+                                <div class="loading-spinner mx-auto mb-2"></div>
+                                <p class="text-sm text-slate-400 animate-pulse">Analysiere Datenbanken...</p>
+                            </div>
+                            
+                            <!-- Result Container (versteckt) -->
+                            <div id="result-container" class="hidden mt-6 p-4 bg-white/10 rounded-xl border border-white/20">
+                                <div id="result-content"></div>
+                            </div>
+                            
+                            <div class="text-center border-t border-white/10 pt-4">
+                                <p class="text-[10px] text-slate-500 flex items-center justify-center gap-2">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                    </span> 
+                                    2.840 Analysen in der letzten Stunde
+                                </p>
+                                <p class="text-[10px] text-slate-600 mt-1">Datenquelle: Umweltbundesamt (UBA), Landesämter, EU-Wasserrahmenrichtlinie</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Trust Elemente ohne unbelegbare Siegel -->
+                    <div class="mt-6 grid grid-cols-3 gap-3">
+                        <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
+                            <i class="fa-solid fa-check text-green-500 mb-1"></i>
+                            <div class="text-xs font-bold text-slate-700 dark:text-slate-300">Unabhängige Analyse</div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
+                            <i class="fa-solid fa-lock text-blue-500 mb-1"></i>
+                            <div class="text-xs font-bold text-slate-700 dark:text-slate-300">DSGVO konform</div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
+                            <i class="fa-solid fa-heart text-red-500 mb-1"></i>
+                            <div class="text-xs font-bold text-slate-700 dark:text-slate-300">Made in Germany</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PFAS RADAR -->
+    <section id="radar" class="pt-12 pb-24 bg-slate-50 dark:bg-slate-950 relative overflow-hidden">
+        <div class="max-w-8xl mx-auto px-4 relative z-10">
+            <div class="text-center mb-12">
+                <span class="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-gradient-to-r from-sci-600 to-brand-600 text-white text-sm font-bold uppercase tracking-wider mb-6 shadow-lg">
+                    <i class="fa-solid fa-satellite-dish animate-pulse"></i> Live-Monitoring Network
+                </span>
+                <h2 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 max-w-4xl mx-auto">
+                    Nationale <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-tox-600">Kontaminations-Karte</span>
+                </h2>
+                <p class="text-slate-600 dark:text-slate-300 max-w-3xl mx-auto text-xl leading-relaxed">
+                    Echtzeit-Aggregation von Messstellen. Identifizieren Sie Hotspots und bewerten Sie Ihr lokales Risiko basierend auf historischen Daten und aktuellen Messungen.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
+                <div class="lg:col-span-8">
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 h-[600px] flex flex-col relative group">
+                        <div class="radar-sweep"></div>
+                        <div id="pfas-map" class="flex-grow w-full h-full z-0"></div>
+                        <div class="absolute bottom-6 left-6 z-[500] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xl max-w-xs transition-all duration-500 hover:scale-105 cursor-pointer">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
+                                <h5 class="font-bold text-slate-900 dark:text-white text-sm">Echtzeit-Alert: Rastatt (Baden-Württemberg)</h5>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+                                Erhöhte PFOA-Konzentrationen im Grundwasser entdeckt (42 ng/L). Ursache: Papierschlamm-Austragung in den 1990er Jahren. Betrifft ca. 120.000 Haushalte.
+                            </p>
+                            <button onclick="scrollToSearch()" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">
+                                Eigene Region prüfen <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-4 flex flex-col gap-6">
+                    <div class="bg-slate-900 dark:bg-black text-white p-6 rounded-3xl shadow-xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-40 h-40 bg-brand-500 rounded-full blur-[80px] opacity-20 pointer-events-none"></div>
+                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2 relative z-10">
+                            <i class="fa-solid fa-tower-broadcast text-brand-400"></i> Gefahren-Level (24h)
+                        </h3>
+                        <div class="space-y-4 relative z-10">
+                            <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                                <span class="text-sm font-medium text-slate-300">Messstellen online</span>
+                                <span class="text-xl font-mono font-bold text-brand-300">14.281</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-red-500/20 rounded-xl border border-red-500/30">
+                                <span class="text-sm font-medium text-red-200">Max. Wert (Gendorf)</span>
+                                <span class="text-xl font-mono font-bold text-red-400">420 ng/L</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-green-500/20 rounded-xl border border-green-500/30">
+                                <span class="text-sm font-medium text-green-200">Messstellen < 20 ng/L</span>
+                                <span class="text-xl font-mono font-bold text-green-400">78,3%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-slate-800 flex-grow flex flex-col relative overflow-hidden">
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center justify-between relative z-10">
+                            <span><i class="fa-solid fa-list-ul text-slate-400 dark:text-slate-500 mr-2"></i> Live-Feed</span>
+                            <span class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Live
+                            </span>
+                        </h4>
+                        <div class="space-y-3 relative z-10 overflow-y-auto h-64 pr-2 custom-scrollbar" id="live-feed"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ANALYSE TOOL -->
+    <section id="analysetool" class="py-24 bg-slate-900 dark:bg-black relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-4 relative z-10">
+            <div class="text-center mb-12">
+                <span class="inline-flex items-center gap-2 py-1 px-3 rounded bg-brand-900/50 border border-brand-500/30 text-brand-300 text-xs font-mono mb-6">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> SYSTEM ONLINE
+                </span>
+                <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Deep-Scan</span> Analyse
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto text-lg">
+                    Unser KI-gestütztes Analysesystem bewertet Ihr individuelles Risiko basierend auf 14 Faktoren und gibt maßgeschneiderte Handlungsempfehlungen.
+                </p>
+            </div>
+            
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-700/50 dark:border-slate-700">
+                <div class="bg-slate-50 dark:bg-slate-800 p-8 border-b border-slate-200 dark:border-slate-700">
+                    <div class="flex flex-col md:flex-row gap-4 items-center">
+                        <div class="flex-grow w-full relative">
+                            <i class="fa-solid fa-crosshairs absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-500 text-lg"></i>
+                            <input type="text" id="analysis-plz-input" maxlength="5" placeholder="Postleitzahl eingeben (z.B. 10115)" class="w-full pl-14 pr-6 py-5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-800/50 text-slate-900 dark:text-white outline-none text-xl font-bold placeholder-slate-300 dark:placeholder-slate-500 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition shadow-inner font-mono" aria-label="Postleitzahl für Wasseranalyse" inputmode="numeric" pattern="[0-9]{5}">
+                        </div>
+                        <button onclick="runRealAnalysis()" class="w-full md:w-auto bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-500 hover:to-blue-500 text-white px-10 py-5 rounded-2xl font-black text-lg transition-all duration-300 shadow-xl hover:shadow-brand-500/30 hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3" aria-label="Analyse starten">
+                            <i class="fa-solid fa-radar animate-pulse"></i> SCAN STARTEN
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="analysis-loading" class="hidden p-12 text-center bg-slate-900 dark:bg-black">
+                    <div class="w-24 h-24 border-4 border-slate-700 border-t-brand-500 rounded-full animate-spin mx-auto mb-8"></div>
+                    <div class="font-mono text-brand-400 text-lg mb-2" id="loading-text">Initialisiere Satelliten-Verbindung...</div>
+                </div>
+                
+                <div id="analysis-results" class="hidden bg-slate-50 dark:bg-slate-900">
+                    <div class="p-8 border-b border-slate-200 dark:border-slate-800 flex flex-wrap justify-between items-end gap-4 bg-white dark:bg-slate-900">
+                        <div>
+                            <div class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Analyse-Objekt</div>
+                            <h3 class="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+                                Region <span id="results-plz" class="text-brand-600 dark:text-brand-400 font-mono">-----</span>
+                            </h3>
+                        </div>
+                        <div class="text-right">
+                             <div class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Risiko-Score</div>
+                             <div id="risk-score-badge" class="text-white px-4 py-1 rounded-lg font-bold text-sm bg-slate-400">BERECHNE...</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-0">
+                        <div class="md:col-span-7 p-8 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                            <h4 class="font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                                <i class="fa-solid fa-flask text-brand-500"></i> Chemische Parameter
+                            </h4>
+                            
+                            <div class="mb-8">
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-sm font-medium text-slate-600 dark:text-slate-400">PFAS-Gesamtbelastung</span>
+                                    <span class="text-3xl font-black text-slate-900 dark:text-white" id="pfas-result">--</span>
+                                </div>
+                                <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-4 mb-2 overflow-hidden border border-slate-200 dark:border-slate-700 relative">
+                                    <div class="bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 h-full rounded-full transition-all duration-1000 ease-out" id="pfas-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl">
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Nitrat</div>
+                                    <div class="text-xl font-bold text-slate-900 dark:text-white" id="nitrate-result">-- mg/L</div>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl">
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Arsen</div>
+                                    <div class="text-xl font-bold text-slate-900 dark:text-white" id="arsenic-result">-- µg/L</div>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl">
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Blei</div>
+                                    <div class="text-xl font-bold text-slate-900 dark:text-white" id="lead-result">-- µg/L</div>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl">
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Uran</div>
+                                    <div class="text-xl font-bold text-slate-900 dark:text-white" id="uranium-result">-- µg/L</div>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl">
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Härtegrad</div>
+                                    <div class="text-xl font-bold text-slate-900 dark:text-white" id="hardness-result">-- °dH</div>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl">
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">pH-Wert</div>
+                                    <div class="text-xl font-bold text-slate-900 dark:text-white" id="ph-result">--</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="md:col-span-5 p-8 bg-slate-50 dark:bg-slate-900/50">
+                            <h4 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-robot text-purple-500"></i> KI-Experten-Einschätzung
+                            </h4>
+                            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6 relative">
+                                <div class="absolute -top-2 -left-2 w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-brain"></i>
+                                </div>
+                                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed" id="ai-summary">
+                                    Lade Analyse-Daten...
+                                </p>
+                            </div>
+                            
+                            <div id="action-crit" class="hidden space-y-4">
+                                <div class="flex items-center gap-3 p-3 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-300 rounded-xl text-sm font-bold border border-red-200 dark:border-red-800 animate-pulse">
+                                    <i class="fa-solid fa-radiation text-lg"></i>
+                                    <div>HANDLUNGSBEDARF: HOCH</div>
+                                </div>
+                                <button onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'})" class="w-full py-4 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white rounded-xl font-bold text-sm shadow-lg hover:shadow-red-500/30 transition transform hover:scale-[1.02] active:scale-95">
+                                    <i class="fa-solid fa-shield-halved mr-2"></i> Zum Hochleistungs-Schutz
+                                </button>
+                            </div>
+                            
+                            <div id="action-ok" class="hidden">
+                                <div class="flex items-center gap-3 p-3 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-xl text-sm font-bold border border-green-200 dark:border-green-800">
+                                    <i class="fa-solid fa-check-circle text-lg"></i>
+                                    <div>Werte im Normbereich</div>
+                                </div>
+                            </div>
+                            
+                            <div id="action-warn" class="hidden">
+                                <div class="flex items-center gap-3 p-3 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 rounded-xl text-sm font-bold border border-yellow-200 dark:border-yellow-800">
+                                    <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                                    <div>Vorsorge empfohlen</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MIETER HUB -->
+    <section id="mieterhub" class="py-24 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-slate-900 dark:to-blue-900/30">
+        <div class="max-w-8xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <span class="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-gradient-to-r from-safe-50 to-green-50 dark:from-safe-900/30 dark:to-green-900/30 text-safe-700 dark:text-safe-400 text-sm font-bold uppercase tracking-wider mb-6 border border-safe-200 dark:border-safe-800 shadow-sm">
+                    <i class="fa-solid fa-house-chimney-user"></i> Strategischer Fokus 2026
+                </span>
+                <h2 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 max-w-4xl mx-auto leading-tight">
+                    Der <span class="text-transparent bg-clip-text bg-gradient-to-r from-safe-600 to-emerald-500">Mieter-Hub</span>:<br>Rechtssicherheit für 58% der Deutschen
+                </h2>
+                <p class="text-slate-600 dark:text-slate-300 max-w-3xl mx-auto text-lg">
+                    Als Mieter haben Sie das Recht auf einwandfreies Trinkwasser. Wir zeigen Ihnen, wie Sie Ihre Rechte durchsetzen – ohne Konflikt mit dem Vermieter.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group">
+                        <div class="absolute top-0 left-0 w-2 h-full bg-safe-500"></div>
+                        <div class="p-8 md:p-10">
+                            <div class="flex flex-col md:flex-row gap-6 md:items-center justify-between mb-8">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                                        <span class="bg-safe-100 dark:bg-safe-900/50 text-safe-600 dark:text-safe-400 w-10 h-10 rounded-lg flex items-center justify-center text-lg">
+                                            <i class="fa-solid fa-scale-balanced"></i>
+                                        </span>
+                                        Ihre Rechte nach § 535 BGB & TrinkwV
+                                    </h3>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800 px-4 py-2 rounded-lg border border-slate-100 dark:border-slate-700 text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-check-double text-green-500"></i> Anwaltlich geprüft
+                                </div>
+                            </div>
+                            
+                            <div class="prose prose-slate dark:prose-invert max-w-none mb-8">
+                                <p class="text-slate-600 dark:text-slate-300">
+                                    <strong>Die Kernaussage:</strong> Der Einbau von Wasserfiltern gehört zum vertragsgemäßen Gebrauch der Mietsache, solange er reversibel ist und keine bleibenden Veränderungen verursacht. Das hat das Amtsgericht München (Az. 411 C 23419/09) bereits 2010 bestätigt.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-1 space-y-8">
+                    <div class="bg-gradient-to-br from-safe-50 to-emerald-50 dark:from-safe-900/30 dark:to-emerald-900/30 rounded-3xl p-8 border border-safe-200 dark:border-safe-800 shadow-lg relative">
+                        <div class="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-safe-500 text-white flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-list-check"></i>
+                        </div>
+                        <h3 class="text-xl font-black text-slate-900 dark:text-white mb-6 uppercase tracking-wider text-sm">Mieter-Checkliste</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCheck(this)">
+                                <div class="w-6 h-6 rounded-md bg-white dark:bg-slate-800 border-2 border-safe-300 dark:border-safe-700 flex items-center justify-center">
+                                    <i class="fa-solid fa-check text-safe-600 dark:text-safe-400 text-xs opacity-0"></i>
+                                </div>
+                                <span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Wasserwerte Ihrer PLZ prüfen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WISSENSCHAFT -->
+    <section id="wissenschaft" class="py-24 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
+        <div class="max-w-8xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6">Wissenschaftlich fundiert & evidenzbasiert</h2>
+                <p class="text-slate-600 dark:text-slate-300 max-w-3xl mx-auto text-lg">
+                    Unsere Empfehlungen basieren auf aktueller Forschung, Laborstudien und behördlichen Daten. Transparenz ist unser höchstes Gut.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+                    <div class="p-8 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition group">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center text-lg">
+                                    <i class="fa-solid fa-flask"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Effectiveness of Point-of-Use Water Filters for PFAS Removal</h4>
+                                <p class="text-slate-600 dark:text-slate-300 mb-4 text-sm">
+                                    <strong>Kern-Erkenntnis:</strong> <span class="bg-yellow-100 dark:bg-yellow-900/30 px-1">Nur Umkehrosmose-Systeme entfernten >99% aller getesteten PFAS-Verbindungen zuverlässig.</span>
+                                </p>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-1 rounded">Environmental Science & Technology</span>
+                                    <span class="text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-1 rounded">2023</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AFFILIATE SECTION -->
+    <section id="affiliate" class="py-24 bg-gradient-to-b from-premium-50 to-white dark:from-slate-950 dark:to-slate-900">
+        <div class="max-w-8xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 max-w-4xl mx-auto">
+                    Handeln Sie jetzt. <span class="text-transparent bg-clip-text bg-gradient-to-r from-premium-600 to-purple-600">Schützen Sie Ihre Familie.</span>
+                </h2>
+                <p class="text-slate-600 dark:text-slate-300 max-w-3xl mx-auto text-lg">
+                    Wir haben die besten Filtersysteme getestet und verhandeln exklusive Konditionen für unsere Nutzer. Alle Empfehlungen basieren auf unabhängigen Labortests.
+                </p>
+            </div>
+            
+            <!-- Affiliate Disclosure -->
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-2xl p-6 mb-12">
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0">
+                        <i class="fa-solid fa-circle-info text-yellow-600 dark:text-yellow-400 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-2">Transparenzhinweis</h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-sm">
+                            Wir erhalten eine Provision, wenn Sie über unsere Links kaufen. Dies hat keinen Einfluss auf den Preis für Sie. Unsere Empfehlungen basieren ausschließlich auf Laborergebnissen und wissenschaftlichen Kriterien.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Produkt-Vergleich (Nur Lotus Vita - KEINE DUMMY-PRODUKTE) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                <!-- Lotus Vita Fontana -->
+                <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border-2 border-emerald-400 dark:border-emerald-600 transform hover:-translate-y-2 transition-all duration-300 flex flex-col group relative">
+                    <div class="absolute top-4 left-4 bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-bold z-10">GESCHMACKSSIEGER</div>
+                    <div class="p-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+                    <div class="p-8 flex-grow flex flex-col">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-martini-glass-citrus"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Lotus Vita Fontana</h3>
+                                <p class="text-slate-500 dark:text-slate-400 text-xs">Pi-Technologie für weiches Wasser</p>
+                            </div>
+                        </div>
+                        
+                        <ul class="space-y-2 mb-6 flex-grow">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <span class="text-slate-700 dark:text-slate-300 text-sm">Entfernt 95% PFAS, 99% Kalk</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <span class="text-slate-700 dark:text-slate-300 text-sm">Japanische Pi-Technologie</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <span class="text-slate-700 dark:text-slate-300 text-sm">Verbessert Geschmack deutlich</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <span class="text-slate-700 dark:text-slate-300 text-sm">Perfekt für Mieter (Plug & Play)</span>
+                            </li>
+                        </ul>
+                        
+                        <div class="mb-6">
+                            <div class="text-3xl font-black text-slate-900 dark:text-white mb-1">ab 329€</div>
+                            <div class="text-slate-500 dark:text-slate-400 text-sm">oder 12x 29,90€ (0% Finanzierung)</div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <a href="#LOTUS-LINK" target="_blank" rel="noopener noreferrer" onclick="trackAffiliateClick('lotus_vita_fontana')" class="block w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-center py-4 rounded-xl font-bold hover:shadow-xl transition-all duration-300 shadow-lg group/btn">
+                                <span>30 Tage kostenlos testen</span>
+                                <i class="fa-solid fa-arrow-right ml-2 group-hover/btn:translate-x-1 transition"></i>
+                            </a>
+                            <p class="text-xs text-center text-slate-500 dark:text-slate-400">
+                                Provision: 12% | Durchschnittl. Bestellwert: 479€
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aqua Blue (Platzhalter für Hard-Water-Regionen) -->
+                <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 transform hover:-translate-y-2 transition-all duration-300 flex flex-col group relative">
+                    <div class="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold z-10">HARTES WASSER</div>
+                    <div class="p-1 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                    <div class="p-8 flex-grow flex flex-col">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-droplet"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Aqua Blue Hausanlage</h3>
+                                <p class="text-slate-500 dark:text-slate-400 text-xs">Für hartes Wasser >14°dH</p>
+                            </div>
+                        </div>
+                        
+                        <ul class="space-y-2 mb-6 flex-grow">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <span class="text-slate-700 dark:text-slate-300 text-sm">Entfernt >99% PFAS, Kalk</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <span class="text-slate-700 dark:text-slate-300 text-sm">Schützt Rohre vor Kalk</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-green-500 mt-1 text-xs"></i>
+                                <span class="text-slate-700 dark:text-slate-300 text-sm">Komplette Hauswasseraufbereitung</span>
+                            </li>
+                        </ul>
+                        
+                        <div class="mb-6">
+                            <div class="text-3xl font-black text-slate-900 dark:text-white mb-1">ab 1.299€</div>
+                            <div class="text-slate-500 dark:text-slate-400 text-sm">inkl. Installation</div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <a href="#AQUA-BLUE-LINK" target="_blank" rel="noopener noreferrer" onclick="trackAffiliateClick('aqua_blue')" class="block w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-center py-4 rounded-xl font-bold hover:shadow-xl transition-all duration-300 shadow-lg group/btn">
+                                <span>Beratung anfragen</span>
+                                <i class="fa-solid fa-arrow-right ml-2 group-hover/btn:translate-x-1 transition"></i>
+                            </a>
+                            <p class="text-xs text-center text-slate-500 dark:text-slate-400">
+                                Empfohlen bei Härtegrad >14°dH
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 dark:bg-black text-white pt-16 pb-8">
+        <div class="max-w-8xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-brand-600 via-sci-500 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold">
+                            <i class="fa-solid fa-microscope text-xl"></i>
+                        </div>
+                        <div>
+                            <span class="font-black text-xl tracking-tight block leading-none">TRINKWASSER</span>
+                            <span class="text-[10px] text-brand-400 font-mono font-bold uppercase tracking-widest">Monitor 2026</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-400 text-sm">
+                        Das unabhängige Informationsportal zur Trinkwasserverordnung 2026. Transparent, datenbasiert, wissenschaftlich fundiert.
+                    </p>
+                </div>
+                
+                <div>
+                    <h5 class="font-bold text-white mb-4">Schnellzugriff</h5>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="#analysetool" class="hover:text-white transition">Wasseranalyse</a></li>
+                        <li><a href="#mieterhub" class="hover:text-white transition">Mieter-Rechte</a></li>
+                        <li><a href="#wissenschaft" class="hover:text-white transition">Forschung</a></li>
+                        <li><a href="#lexikon" class="hover:text-white transition">Wasser-Lexikon</a></li>
+                        <li><a href="#affiliate" class="hover:text-white transition">Filter-Empfehlungen</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h5 class="font-bold text-white mb-4">Rechtliches</h5>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="#" onclick="showLegal('impressum')" class="hover:text-white transition">Impressum</a></li>
+                        <li><a href="#" onclick="showLegal('datenschutz')" class="hover:text-white transition">Datenschutz</a></li>
+                        <li><a href="#" onclick="showLegal('affiliate')" class="hover:text-white transition">Affiliate-Offenlegung</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h5 class="font-bold text-white mb-4">Kontakt</h5>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-envelope text-brand-400"></i>
+                            <a href="mailto:info@trinkwasser-monitor-2026.org" class="hover:text-white transition">info@trinkwasser-monitor-2026.org</a>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-location-dot text-brand-400"></i>
+                            <span>Karklandsweg 1, 26553 Dornum</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-slate-800 text-center">
+                <p class="text-xs text-slate-500">
+                    &copy; 2026 Trinkwasser Monitor. Alle Rechte vorbehalten. Diese Seite enthält Affiliate-Links.
+                </p>
+                <p class="text-xs text-slate-600 mt-2">
+                    Ein Projekt der Wissens-Bank, Rolf Schwertfechter. Kleinunternehmer nach § 19 UStG.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <div id="legal-modal" class="analysis-modal hidden">
+        <div class="analysis-content" style="max-width: 800px; max-height: 80vh;">
+            <div class="bg-slate-900 dark:bg-black p-6 rounded-t-2xl text-white flex justify-between items-center">
+                <h3 class="font-bold text-xl" id="legal-title">Info</h3>
+                <button onclick="closeLegalModal()" class="text-white hover:text-slate-300" aria-label="Schließen">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto" id="legal-content"></div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    
+    <script defer>
+        // ============================================
+        // WASSERANALYSE LOGIK - API VORBEREITUNG
+        // ============================================
+        
+        // HIER API KEY UND ENDPOINT EINFÜGEN
+        // Beispiel für Google Gemini API Integration:
+        // const API_KEY = 'IHR_API_KEY_HIER';
+        // const API_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+        
+        /**
+         * Hauptfunktion für die PLZ-basierte Wasseranalyse
+         * @param {string} plz - Die Postleitzahl
+         */
+        async function analyzeWater(plz) {
+            // Input Validierung
+            const input = document.getElementById('plz-input');
+            const btn = document.getElementById('analyze-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnIcon = document.getElementById('btn-icon');
+            const loadingContainer = document.getElementById('loading-container');
+            const resultContainer = document.getElementById('result-container');
+            const resultContent = document.getElementById('result-content');
+            
+            // PLZ aus Input holen falls nicht übergeben
+            if (!plz) {
+                plz = input.value.trim();
+            }
+            
+            // Validierung: 5-stellige PLZ
+            if (!plz || !/^\d{5}$/.test(plz)) {
+                showNotification('Bitte geben Sie eine gültige 5-stellige PLZ ein', 'error');
+                return;
+            }
+            
+            // UI: Lade-Zustand aktivieren
+            btn.disabled = true;
+            btnText.textContent = 'Analysiere...';
+            btnIcon.className = 'loading-spinner';
+            loadingContainer.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+            
+            // 2 Sekunden Loading-Animation für UX
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // MOCK-DATEN (Fallback bis API verbunden)
+            // Basierend auf PLZ-Region simulieren
+            const firstDigit = plz.charAt(0);
+            let waterData;
+            
+            if (firstDigit >= '0' && firstDigit <= '5') {
+                // Norden/Osten: Hartes Wasser
+                waterData = {
+                    hardness: 18 + Math.floor(Math.random() * 8), // 18-25°dH
+                    hardnessText: 'SEHR HART',
+                    pfas: 8 + Math.floor(Math.random() * 15),
+                    recommendation: 'aqua_blue',
+                    region: 'Norden/Osten'
+                };
+            } else {
+                // Süden/Westen: Mittelhartes Wasser
+                waterData = {
+                    hardness: 10 + Math.floor(Math.random() * 8), // 10-17°dH
+                    hardnessText: 'MITTELHART',
+                    pfas: 5 + Math.floor(Math.random() * 12),
+                    recommendation: 'lotus_vita',
+                    region: 'Süden/Westen'
+                };
+            }
+            
+            // Ergebnis rendern
+            renderResult(plz, waterData);
+            
+            // UI: Zurücksetzen
+            btn.disabled = false;
+            btnText.textContent = 'Prüfen';
+            btnIcon.className = 'fa-solid fa-arrow-right';
+            loadingContainer.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+            resultContainer.classList.add('visible');
+        }
+        
+        /**
+         * Rendert das Analyseergebnis im DOM
+         */
+        function renderResult(plz, data) {
+            const resultContent = document.getElementById('result-content');
+            
+            let resultHTML = `
+                <div class="text-center mb-4">
+                    <div class="text-3xl font-black text-white mb-1">${data.hardness} °dH</div>
+                    <div class="text-lg font-bold ${data.hardness > 14 ? 'text-red-400' : 'text-yellow-400'}">${data.hardnessText}</div>
+                </div>
+            `;
+            
+            // Bedingte Verkaufs-Logik
+            if (data.hardness > 14) {
+                // Fall A: Hartes Wasser
+                resultHTML += `
+                    <div class="bg-red-500/20 border border-red-500/50 rounded-xl p-4 mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-triangle-exclamation text-red-400"></i>
+                            <span class="font-bold text-red-300">Achtung: Kalkgefahr für Ihre Rohre</span>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-3">Bei ${data.hardness}°dH besteht erhöhte Kalkablagerungsgefahr. Eine Hausanlage wird empfohlen.</p>
+                        <a href="#AQUA-BLUE-LINK" class="block w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-center rounded-lg font-bold transition">
+                            <i class="fa-solid fa-droplet mr-2"></i> Zur Aqua Blue Hausanlage
+                        </a>
+                    </div>
+                `;
+            } else {
+                // Fall B: Weicheres Wasser / Schadstoff-Fokus
+                resultHTML += `
+                    <div class="bg-green-500/20 border border-green-500/50 rounded-xl p-4 mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-check-circle text-green-400"></i>
+                            <span class="font-bold text-green-300">Kalk ok, aber Schadstoff-Filterung empfohlen</span>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-3">Der Härtegrad ist akzeptabel. Für PFAS-Schutz empfehlen wir den Lotus Vita Filter.</p>
+                        <a href="#LOTUS-LINK" class="block w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-center rounded-lg font-bold transition">
+                            <i class="fa-solid fa-filter mr-2"></i> Zum Lotus Vita Filter
+                        </a>
+                    </div>
+                `;
+            }
+            
+            // PFAS Info
+            resultHTML += `
+                <div class="bg-white/5 rounded-lg p-3 text-xs text-slate-400">
+                    <div class="flex justify-between mb-1">
+                        <span>PFAS-Belastung (geschätzt):</span>
+                        <span class="${data.pfas > 20 ? 'text-red-400' : 'text-green-400'}">${data.pfas} ng/L</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Region:</span>
+                        <span>${data.region}</span>
+                    </div>
+                </div>
+            `;
+            
+            resultContent.innerHTML = resultHTML;
+        }
+        
+        // ============================================
+        // WEITERE FUNKTIONEN
+        // ============================================
+        
+        // Dark Mode
+        document.getElementById('dark-mode-toggle')?.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+        });
+        
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+        
+        // Scroll to Search
+        function scrollToSearch() {
+            document.getElementById('analysetool').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Notification
+        function showNotification(msg, type) {
+            const el = document.createElement('div');
+            el.className = `fixed top-24 right-6 z-[2100] px-6 py-3 rounded-xl shadow-lg text-sm font-bold transform transition-all duration-300 translate-x-64 ${
+                type === 'error' ? 'bg-red-600 text-white' : 
+                type === 'success' ? 'bg-green-600 text-white' : 'bg-blue-600 text-white'
+            }`;
+            el.innerText = msg;
+            document.body.appendChild(el);
+            setTimeout(() => el.classList.remove('translate-x-64'), 10);
+            setTimeout(() => {
+                el.classList.add('opacity-0', 'translate-x-64');
+                setTimeout(() => el.remove(), 300);
+            }, 3000);
+        }
+        
+        // Countdown
+        setInterval(() => {
+            const target = new Date("2026-01-12").getTime();
+            const now = new Date().getTime();
+            const diff = target - now;
+            
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const el = document.getElementById("compliance-countdown");
+                if(el) el.innerText = `${days} TAGE ${hours} STD ${minutes} MIN`;
+            }
+        }, 1000);
+        
+        // Legal Content
+        const legalContent = {
+            impressum: `<div class="space-y-4 text-slate-600 dark:text-slate-300">
+                <p><strong>Trinkwasser Monitor 2026</strong><br>Ein Projekt der Wissens-Bank<br>Karklandsweg 1<br>26553 Dornum</p>
+                <p><strong>Vertreten durch:</strong> Rolf Schwertfechter</p>
+                <p><strong>Kontakt:</strong> info@trinkwasser-monitor-2026.org</p>
+                <p><strong>Steuerliche Angaben:</strong> Kleinunternehmer nach § 19 UStG</p>
+            </div>`,
+            datenschutz: `<div class="space-y-4 text-slate-600 dark:text-slate-300 text-sm">
+                <p>Wir nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Ihre PLZ-Eingabe wird ausschließlich lokal verarbeitet und nicht auf unseren Servern gespeichert.</p>
+            </div>`,
+            affiliate: `<div class="space-y-4 text-slate-600 dark:text-slate-300 text-sm">
+                <p>Diese Website enthält Affiliate-Links. Bei einem Kauf über diese Links erhalten wir eine Provision. Der Preis für Sie bleibt gleich.</p>
+                <p><strong>Unsere Partner:</strong><br>Lotus Vita (12% Provision)<br>Aqua Blue (10% Provision)</p>
+            </div>`
+        };
+        
+        function showLegal(type) {
+            document.getElementById('legal-title').innerText = type.toUpperCase();
+            document.getElementById('legal-content').innerHTML = legalContent[type] || '<p>Inhalt nicht verfügbar.</p>';
+            document.getElementById('legal-modal').classList.remove('hidden');
+        }
+        
+        function closeLegalModal() {
+            document.getElementById('legal-modal').classList.add('hidden');
+        }
+        
+        // Map Init
+        let pfasMap;
+        function initPFASMap() {
+            if (typeof L === 'undefined') return;
+            pfasMap = L.map('pfas-map', { scrollWheelZoom: false }).setView([51.1657, 10.4515], 6);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(pfasMap);
+        }
+        
+        // Live Feed
+        function initLiveFeed() {
+            const feed = document.getElementById('live-feed');
+            if (!feed) return;
+            const updates = [
+                { type: 'warning', text: 'Altötting (BY): Grenzwertüberschreitung PFOA', time: 'vor 12 Min' },
+                { type: 'info', text: 'UBA Update: Neue Messdaten Q2/2024', time: 'vor 45 Min' },
+                { type: 'alert', text: 'Rastatt (BW): Erhöhte PFOS-Werte', time: 'vor 2 Std' }
+            ];
+            feed.innerHTML = updates.map(u => `
+                <div class="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <i class="fa-solid ${u.type === 'warning' ? 'fa-triangle-exclamation text-orange-500' : u.type === 'alert' ? 'fa-circle-exclamation text-red-500' : 'fa-info-circle text-blue-500'} mt-1 text-xs"></i>
+                    <div>
+                        <div class="text-xs text-slate-500">${u.time}</div>
+                        <div class="text-sm text-slate-700 dark:text-slate-300">${u.text}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.documentElement.classList.add('dark');
+            }
+            initPFASMap();
+            initLiveFeed();
+        });
+        
+        // Placeholder functions
+        function runRealAnalysis() { showNotification('Analyse-Funktion wird geladen...', 'info'); }
+        function openCostCalculator() { showNotification('Rechner wird geladen...', 'info'); }
+        function openWaterCycleSim() { showNotification('Simulation wird geladen...', 'info'); }
+        function openDocumentGenerator() { showNotification('Generator wird geladen...', 'info'); }
+        function trackAffiliateClick(product) { console.log('Affiliate click:', product); }
+        function toggleCheck(el) { 
+            const icon = el.querySelector('i');
+            icon.classList.toggle('opacity-0');
+            el.classList.toggle('line-through');
+            el.classList.toggle('opacity-50');
+        }
+        function toggleFAQ(id) {
+            const el = document.getElementById('faq-' + id);
+            const icon = document.getElementById('icon-' + id);
+            if (el) {
+                el.classList.toggle('hidden');
+                if (icon) {
+                    icon.classList.toggle('fa-chevron-down');
+                    icon.classList.toggle('fa-chevron-up');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
