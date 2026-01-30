@@ -36,11 +36,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <!-- Leaflet Map Integration -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <!-- Font Awesome für erweiterte Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google APIs -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     
     <!-- Theme Config mit erweiterten Farben -->
     <script>
@@ -205,6 +208,7 @@
             100% { background-position: -200% 0; }
         }
     </style>
+<base target="_blank">
 </head>
 <body id="top" class="bg-white text-slate-800 font-sans leading-relaxed antialiased relative dark:bg-slate-900 dark:text-slate-200 transition-colors duration-300">
 
@@ -230,6 +234,9 @@
                     <span class="text-[10px] text-brand-600 dark:text-brand-400 font-mono font-bold uppercase tracking-widest text-center block">Monitor 2026</span>
                 </div>
             </a>
+            
+            <!-- Google Sign-In Button -->
+            <div id="g_id_signin" class="hidden lg:block"></div>
             
             <div class="hidden lg:flex gap-6 text-sm font-semibold text-slate-700 dark:text-slate-300">
                 <a href="https://trinkwasser-monitor-2026.org/#analysetool" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fa-solid fa-chart-line text-xs"></i> Analyse</a>
@@ -400,6 +407,15 @@
                                     </button>
                                 </div>
                                 <p class="text-xs text-slate-400 mt-2">Beispiel: 10115 (Berlin-Mitte), 80331 (München), 50667 (Köln)</p>
+                            </div>
+                            
+                            <!-- Google Custom Search Integration -->
+                            <div class="mb-4">
+                                <div class="relative">
+                                    <i class="fa-solid fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                                    <input type="text" id="gcs-search-input" placeholder="Wasserqualität in Ihrer Stadt suchen..." class="w-full pl-12 pr-4 py-3 rounded-xl text-slate-900 dark:text-white dark:bg-slate-800/50 outline-none text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:ring-4 focus:ring-brand-500/50 transition shadow-lg" aria-label="Google Custom Search">
+                                </div>
+                                <div id="gcs-results" class="mt-2 max-h-40 overflow-y-auto bg-white/10 rounded-lg hidden"></div>
                             </div>
                             
                             <div class="text-center border-t border-white/10 pt-4">
@@ -2116,7 +2132,225 @@
     </div>
 
     <script>
+        // ============================================
+        // API KONFIGURATION - KEYS HIER EINTRAGEN
+        // ============================================
+        
+        // Google API Konfiguration
+        const GOOGLE_CONFIG = {
+            // Google Cloud API Key (für Custom Search, Maps, etc.)
+            API_KEY: 'HIER_GOOGLE_API_KEY_EINTRAGEN',
+            
+            // Google Custom Search Engine ID
+            // Erstellen Sie eine Custom Search Engine unter: https://cse.google.com/cse/
+            // Site: trinkwasser-monitor-2026.org (oder Ihre Domain)
+            // Suchen Sie nach "Wasserqualität", "PFAS", "Trinkwasser"
+            SEARCH_ENGINE_ID: 'HIER_CSE_ID_EINTRAGEN',
+            
+            // Google OAuth Client ID (für Google Sign-In)
+            // Erstellen Sie unter: https://console.cloud.google.com/apis/credentials
+            CLIENT_ID: 'HIER_GOOGLE_CLIENT_ID_EINTRAGEN.apps.googleusercontent.com'
+        };
+        
+        // Gemini API Konfiguration
+        // API Key erstellen unter: https://ai.google.dev/
+        const GEMINI_CONFIG = {
+            API_KEY: 'HIER_GEMINI_API_KEY_EINTRAGEN',
+            MODEL: 'gemini-1.5-flash-latest' // oder 'gemini-1.5-pro-latest'
+        };
+
+        // ============================================
+        // API INTEGRATIONEN - REALE FUNKTIONEN
+        // ============================================
+
+        /**
+         * Google Custom Search API - Echte Suche
+         * Sucht nach Wasserqualitätsdaten in der Google Custom Search Engine
+         */
+        async function searchGoogleCustom(query) {
+            if (GOOGLE_CONFIG.API_KEY === 'HIER_GOOGLE_API_KEY_EINTRAGEN' || 
+                GOOGLE_CONFIG.SEARCH_ENGINE_ID === 'HIER_CSE_ID_EINTRAGEN') {
+                console.warn('⚠️ Google API Keys nicht konfiguriert. Bitte in GOOGLE_CONFIG eintragen.');
+                return null;
+            }
+
+            try {
+                const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_CONFIG.API_KEY}&cx=${GOOGLE_CONFIG.SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=5&hl=de`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    return data.items.map(item => ({
+                        title: item.title,
+                        link: item.link,
+                        snippet: item.snippet,
+                        displayLink: item.displayLink
+                    }));
+                }
+                return [];
+            } catch (error) {
+                console.error('Google Custom Search Fehler:', error);
+                return null;
+            }
+        }
+
+        /**
+         * Gemini API - Echte KI-Analyse
+         * Generiert wissenschaftliche Analysen basierend auf Wasserdaten
+         */
+        async function analyzeWithGemini(plz, pfasValue, riskLevel) {
+            if (GEMINI_CONFIG.API_KEY === 'HIER_GEMINI_API_KEY_EINTRAGEN') {
+                console.warn('⚠️ Gemini API Key nicht konfiguriert. Bitte in GEMINI_CONFIG eintragen.');
+                return generateFallbackAnalysis(plz, pfasValue, riskLevel);
+            }
+
+            try {
+                const prompt = `Du bist ein Wasserqualitäts-Experte. Analysiere folgende Trinkwasserdaten für PLZ ${plz}:
+                
+                PFAS-Wert: ${pfasValue} ng/L
+                Risiko-Level: ${riskLevel}
+                Grenzwert (TrinkwV 2026): 20 ng/L
+                
+                Gib eine kurze, verständliche Experten-Einschätzung auf Deutsch (max. 200 Zeichen):
+                - Was bedeutet dieser Wert für die Gesundheit?
+                - Welche Handlungsempfehlungen gibt es?
+                - Ist ein Wasserfilter notwendig?
+                
+                Antworte professionell aber verständlich für Laien.`;
+
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_CONFIG.MODEL}:generateContent?key=${GEMINI_CONFIG.API_KEY}`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            maxOutputTokens: 300
+                        }
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                    return data.candidates[0].content.parts[0].text;
+                }
+                
+                return generateFallbackAnalysis(plz, pfasValue, riskLevel);
+                
+            } catch (error) {
+                console.error('Gemini API Fehler:', error);
+                return generateFallbackAnalysis(plz, pfasValue, riskLevel);
+            }
+        }
+
+        /**
+         * Fallback-Analyse wenn API nicht verfügbar
+         */
+        function generateFallbackAnalysis(plz, pfasValue, riskLevel) {
+            const reports = {
+                crit: `Analyse für PLZ ${plz}: PFAS-Wert bei ${pfasValue} ng/L (über Grenzwert von 20 ng/L). Handlungsempfehlung: Installieren Sie umgehend ein Umkehrosmose-System (AquaZero ProMax). Die Belastung kann langfristig gesundheitliche Risiken bergen.`,
+                warn: `Analyse für PLZ ${plz}: PFAS-Wert bei ${pfasValue} ng/L (nahe Grenzwert). Vorsorge empfehlenswert: Ein Aktivkohlefilter (Lotus Vita) schützt vor weiteren Belastungen und verbessert den Geschmack.`,
+                ok: `Analyse für PLZ ${plz}: PFAS-Wert bei ${pfasValue} ng/L (unter Grenzwert). Kein akuter Handlungsbedarf. Für optimalen Geschmack und zusätzliche Sicherheit empfehlen wir den Lotus Vita Filter.`
+            };
+            return reports[riskLevel] || `Analyse für PLZ ${plz}: ${pfasValue} ng/L PFAS.`;
+        }
+
+        /**
+         * Google Sign-In Integration
+         */
+        function initGoogleSignIn() {
+            if (GOOGLE_CONFIG.CLIENT_ID === 'HIER_GOOGLE_CLIENT_ID_EINTRAGEN.apps.googleusercontent.com') {
+                console.warn('⚠️ Google Client ID nicht konfiguriert. Sign-In deaktiviert.');
+                return;
+            }
+
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CONFIG.CLIENT_ID,
+                    callback: handleGoogleSignIn,
+                    auto_select: false,
+                    cancel_on_tap_outside: true
+                });
+
+                google.accounts.id.renderButton(
+                    document.getElementById('g_id_signin'),
+                    { theme: 'outline', size: 'medium', text: 'signin_with' }
+                );
+            }
+        }
+
+        function handleGoogleSignIn(response) {
+            // JWT Token dekodieren
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            console.log('Google Sign-In erfolgreich:', payload);
+            
+            // Benutzer-Info anzeigen
+            showNotification(`Willkommen, ${payload.given_name}!`, 'success');
+            
+            // Hier können Sie den Benutzer bei Ihrem Backend authentifizieren
+            // fetch('/api/auth/google', { method: 'POST', body: JSON.stringify({ token: response.credential }) })
+        }
+
+        /**
+         * Google Custom Search Integration im UI
+         */
+        function initGoogleSearch() {
+            const searchInput = document.getElementById('gcs-search-input');
+            const resultsContainer = document.getElementById('gcs-results');
+            
+            if (!searchInput || !resultsContainer) return;
+            
+            let debounceTimer;
+            
+            searchInput.addEventListener('input', async (e) => {
+                clearTimeout(debounceTimer);
+                const query = e.target.value.trim();
+                
+                if (query.length < 3) {
+                    resultsContainer.classList.add('hidden');
+                    return;
+                }
+                
+                debounceTimer = setTimeout(async () => {
+                    const results = await searchGoogleCustom(`${query} Wasserqualität PFAS`);
+                    
+                    if (results && results.length > 0) {
+                        resultsContainer.innerHTML = results.map(r => `
+                            <a href="${r.link}" target="_blank" rel="noopener" class="block p-3 hover:bg-white/10 border-b border-white/10 last:border-0">
+                                <div class="font-bold text-sm text-white">${r.title}</div>
+                                <div class="text-xs text-slate-400">${r.displayLink}</div>
+                                <div class="text-xs text-slate-300 line-clamp-2">${r.snippet}</div>
+                            </a>
+                        `).join('');
+                        resultsContainer.classList.remove('hidden');
+                    } else {
+                        resultsContainer.innerHTML = '<div class="p-3 text-slate-400 text-sm">Keine Ergebnisse gefunden</div>';
+                        resultsContainer.classList.remove('hidden');
+                    }
+                }, 500);
+            });
+            
+            // Schließen bei Klick außerhalb
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+                    resultsContainer.classList.add('hidden');
+                }
+            });
+        }
+
+        // ============================================
         // LEGAL CONTENT ERWEITERT - AKTUALISIERTE DATEN
+        // ============================================
         const legalContent = {
             impressum: `<div class="space-y-6">
                 <h4 class="font-bold text-2xl mb-4 text-slate-800 dark:text-white">Impressum</h4>
@@ -2223,7 +2457,7 @@
                     • Wir testen Produkte unabhängig<br>
                     • Wir verhandeln Rabatte für unsere Nutzer<br>
                     • Provisionen haben keinen Einfluss auf unsere Bewertungen<br>
-                    • Wir lehnen Provisionsangebote ab, die unsere Unabhängigkeit gefährden</p>
+                    • Wir lehnen Provisionen ab, die unsere Unabhängigkeit gefährden</p>
                     
                     <p><strong>3. Unsere Partner</strong><br>
                     AquaZero (14% Provision)<br>
@@ -2292,6 +2526,8 @@
             initRadarCharts(); 
             renderWiki();
             initLiveFeed();
+            initGoogleSignIn();
+            initGoogleSearch();
             
             // Event Listener
             document.getElementById('analysis-plz-input')?.addEventListener('keypress', function(e) { 
@@ -2507,7 +2743,9 @@
             }, 1500);
         }
         
-        // ANALYSIS & AI
+        // ============================================
+        // ANALYSIS & AI - MIT GEMINI INTEGRATION
+        // ============================================
         async function runRealAnalysis() {
             const inputs = document.querySelectorAll('input[placeholder*="Postleitzahl"]');
             let plz = ""; 
@@ -2599,24 +2837,15 @@
             document.getElementById('risk-score-badge').innerText = riskScore;
             document.getElementById('risk-score-badge').className = `text-white px-4 py-1 rounded-lg font-bold text-sm ${riskColor}`;
             
-            // KI-Analyse
+            // KI-Analyse mit Gemini
             setTimeout(async () => {
-                const aiText = await generateAnalysisReport(plz, pfasVal, riskLevel);
+                const aiText = await analyzeWithGemini(plz, pfasVal, riskLevel);
                 document.getElementById('ai-summary').innerText = aiText;
                 document.getElementById('analysis-loading').classList.add('hidden');
                 showNotification("Analyse für PLZ " + plz + " fertig", "success");
             }, 2000);
         }
-        
-        async function generateAnalysisReport(plz, val, riskLevel) {
-            const reports = {
-                crit: `Analyse für PLZ ${plz}: PFAS-Wert bei ${val} ng/L (über Grenzwert von 20 ng/L). Handlungsempfehlung: Installieren Sie umgehend ein Umkehrosmose-System (AquaZero ProMax). Die Belastung kann langfristig gesundheitliche Risiken bergen.`,
-                warn: `Analyse für PLZ ${plz}: PFAS-Wert bei ${val} ng/L (nahe Grenzwert). Vorsorge empfehlenswert: Ein Aktivkohlefilter (Lotus Vita) schützt vor weiteren Belastungen und verbessert den Geschmack.`,
-                ok: `Analyse für PLZ ${plz}: PFAS-Wert bei ${val} ng/L (unter Grenzwert). Kein akuter Handlungsbedarf. Für optimalen Geschmack und zusätzliche Sicherheit empfehlen wir den Lotus Vita Filter.`
-            };
-            return reports[riskLevel] || `Analyse für PLZ ${plz}: ${val} ng/L PFAS.`;
-        }
-        
+
         // MAP & CHARTS
         let pfasMap;
         function initPFASMap() {
